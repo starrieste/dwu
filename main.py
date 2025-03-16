@@ -15,9 +15,13 @@ class DailyWallpaper:
         self.filename = None
         
         self.constant_check = False
+        self.last_check = 0
+        self.total_auto_checks = 0
         
     def runTerminal(self):
         print('Welcome to DWU (pronounced dee-wu)!\nThe program that brings you a new waifu image every day :3')
+        
+        threading.Thread(target=self.wallpaperCheckLoop, daemon=True).start()
         
         while True:
             user_input = input('> ').lower()
@@ -40,22 +44,26 @@ class DailyWallpaper:
                     print('Auto wallpaper updater is already running!')
                     continue
                 threading.Thread(target=self.wallpaperCheckLoop, daemon=True).start()
-                print('Started auto wallpaper updater in the background')
             elif user_input.startswith('stop'):
                 self.constant_check = False
+            elif user_input.startswith('last'):
+                print(f'The last auto wallpaper update was {round(time.time() - self.last_check, 3)} seconds ago')
+                print(f'There have been {self.total_auto_checks} total auto updates')
             else:
                 print(f'Unrecognized command or invalid syntax')
     
     def wallpaperCheckLoop(self):
-        logging.info('Started auto wallpaper updater')
+        print('Started auto wallpaper updater in the background')
         self.constant_check = True
-        last_check = 0
+        self.last_check = 0
         while self.constant_check:
-            if time.time() - last_check >= 10:
-                last_check = time.time()
+            if time.time() - self.last_check >= 600:
                 self.updateWallpaperImg()
                 self.setWallpaper()
                 logging.info('Updated wallpaper')
+                
+                self.last_check = time.time()
+                self.total_auto_checks += 1
         
         print('Stopped auto wallpaper updater')
 
