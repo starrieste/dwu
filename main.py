@@ -1,0 +1,107 @@
+import os
+import time
+import ctypes
+import logging
+import threading
+from requests_html import HTMLSession
+
+logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
+
+class DailyWallpaper:
+    def __init__(self, root_url='https://wallpaper-a-day.com'): 
+        self.session = HTMLSession()
+        self.root_url = root_url
+        self.img_src = None
+        self.filename = None
+        
+        self.constant_check = False
+        
+    def runTerminal(self):
+        print('Welcome to DWU (pronounced dee-wu)!\nThe program that brings you a new waifu image every day :3')
+        
+        while True:
+            user_input = input('> ').lower()
+            if user_input.isspace() or len(user_input) == 0:
+                continue
+            elif user_input == 'exit':
+                print('Exiting...')
+                break
+            elif user_input.startswith('set '):
+                n = int(user_input.split(' ')[1])
+                print(f'Setting to the #{n} most recent wallpaper...')
+                try:
+                    self.updateWallpaperImg(n-1)
+                    self.setWallpaper()
+                except Exception as e:
+                    print('Something went wrong')
+                    logging.error(e)
+            elif user_input.startswith('start'):
+                if self.constant_check:
+                    print('Auto wallpaper updater is already running!')
+                    continue
+                threading.Thread(target=self.wallpaperCheckLoop, daemon=True).start()
+                print('Started auto wallpaper updater in the background')
+            elif user_input.startswith('stop'):
+                self.constant_check = False
+            else:
+                print(f'Unrecognized command or invalid syntax')
+    
+    def wallpaperCheckLoop(self):
+        logging.info('Started auto wallpaper updater')
+        self.constant_check = True
+        last_check = 0
+        while self.constant_check:
+            if time.time() - last_check >= 10:
+                last_check = time.time()
+                self.updateWallpaperImg()
+                self.setWallpaper()
+                logging.info('Updated wallpaper')
+        
+        print('Stopped auto wallpaper updater')
+
+    def updateWallpaperImg(self, n=0):
+        # update SRC to the n'th wallpaper
+        r = self.session.get(self.root_url)
+        
+        link = r.html.find('.post')[n].find('.entry-content')[0].find('a')[0].attrs['href']
+        
+        if (link.startswith('https://imgur.com')):
+            r = self.session.get(link)
+            self.img_src = r.html.find('.image-placeholder')[0].attrs['src']
+        else:
+            self.img_src = link
+        
+        if self.img_src == None:
+            self.img_src = self.img_src
+            
+        filename = 'latest_wallpaper.' + self.img_src.split('/')[-1].split('.')[1]
+
+        response = self.session.get(self.img_src)
+        if response.status_code == 200:
+            with open(filename, 'wb') as f:
+                f.write(response.content)
+        else:
+            logging.error(f'Failed to retrieve image. Status code: {response.status_code}')
+            
+        self.filename = filename
+
+    def setWallpaper(self, path=None):
+        if path == None:
+            path = self.filename
+        
+        if not os.path.isfile(path):
+            logging.error(f'File not found: {path}')
+            return
+        abs_path = os.path.abspath(path)
+
+        SPI_SETDESKWALLPAPER = 20
+        SPIF_UPDATEINIFILE = 0x01
+        SPIF_SENDCHANGE = 0x02
+
+        ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, abs_path, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE)
+
+        logging.info('Wallpaper set successfully!')
+        
+    
+if __name__ == '__main__':
+    DailyWallpaper().runTerminal()
