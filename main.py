@@ -36,6 +36,7 @@ class DailyWallpaper:
                 try:
                     self.updateWallpaperImg(n-1)
                     self.setWallpaper()
+                    print("Successfully set wallpaper!")
                 except Exception as e:
                     print('Something went wrong')
                     logging.error(e)
@@ -58,9 +59,12 @@ class DailyWallpaper:
         self.last_check = 0
         while self.constant_check:
             if time.time() - self.last_check >= 600:
-                self.updateWallpaperImg()
-                self.setWallpaper()
-                logging.info('Updated wallpaper')
+                try:
+                    self.updateWallpaperImg()
+                    self.setWallpaper()
+                    logging.info('Updated wallpaper')
+                except Exception as e:
+                    logging.error(e)
                 
                 self.last_check = time.time()
                 self.total_auto_checks += 1
