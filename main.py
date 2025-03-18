@@ -81,9 +81,9 @@ class DailyWallpaper:
         if self.img_src == None:
             self.img_src = self.img_src
             
-        try:
+        if self.img_src.endswith(('png', 'jpg', 'jpeg')):
             filename = 'latest_wallpaper.' + self.img_src.split('/')[-1].split('.')[1]
-        except:
+        else:
             filename = 'latest_wallpaper.png'
 
         response = self.session.get(self.img_src)
