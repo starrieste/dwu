@@ -1,4 +1,5 @@
 import os
+import sys
 import time
 import ctypes
 import logging
@@ -69,13 +70,11 @@ class DailyWallpaper:
         r = self.session.get(self.root_url)
         
         link = r.html.find('.post')[n].find('a')[0].attrs['href']
-        print('Link is:', link)
         r = self.session.get(link)
         if link.startswith('https://imgur.com'):
             self.img_src = r.html.find('.image-placeholder')[0].attrs['src']
         elif link.startswith('https://drive.google.com'):
             self.img_src = 'https://drive.google.com/uc?id=' + link.split('/')[5]
-            print(self.img_src)
         else:
             self.img_src = link
         
@@ -112,6 +111,13 @@ class DailyWallpaper:
         ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, abs_path, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE)
 
         logging.info('Wallpaper set successfully!')
-        
+
 if __name__ == '__main__':
-    DailyWallpaper().runTerminal()
+    try:
+        DailyWallpaper().runTerminal()
+    except Exception as e:
+        crash=["Error on line {}".format(sys.exc_info()[-1].tb_lineno),"\n",e]
+        print(''.join(list(map(str, crash))))
+        timeX=str(time.time())
+        with open("crashlogs/CRASH-"+timeX+".txt","w") as logfile:
+            logfile.write(''.join(list(map(str, crash))))
