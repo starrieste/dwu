@@ -5,7 +5,7 @@ import logging
 import threading
 from requests_html import HTMLSession
 
-logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.WARNING, format='%(levelname)s - %(message)s')
 
 class DailyWallpaper:
     def __init__(self, root_url='https://wallpaper-a-day.com'): 
@@ -21,25 +21,21 @@ class DailyWallpaper:
     def runTerminal(self):
         print('Welcome to DWU (pronounced dee-wu)!\nThe program that brings you a new waifu image every day :3')
         
-        threading.Thread(target=self.wallpaperCheckLoop, daemon=True).start()
+        # threading.Thread(target=self.wallpaperCheckLoop, daemon=True).start()
         
         while True:
             user_input = input('> ').lower()
             if user_input.isspace() or len(user_input) == 0:
                 continue
-            elif user_input == 'exit':
+            elif user_input == 'exit' or user_input == 'e':
                 print('Exiting...')
                 break
             elif user_input.startswith('set '):
                 n = int(user_input.split(' ')[1])
                 print(f'Setting to the #{n} most recent wallpaper...')
-                try:
-                    self.updateWallpaperImg(n-1)
-                    self.setWallpaper()
-                    print("Successfully set wallpaper!")
-                except Exception as e:
-                    print('Something went wrong')
-                    logging.error(e)
+                self.updateWallpaperImg(n)
+                self.setWallpaper()
+                print("Successfully set wallpaper!")
             elif user_input.startswith('start'):
                 if self.constant_check:
                     print('Auto wallpaper updater is already running!')
@@ -59,12 +55,9 @@ class DailyWallpaper:
         self.last_check = 0
         while self.constant_check:
             if time.time() - self.last_check >= 600:
-                try:
-                    self.updateWallpaperImg()
-                    self.setWallpaper()
-                    logging.info('Updated wallpaper')
-                except Exception as e:
-                    logging.error(e)
+                self.updateWallpaperImg()
+                self.setWallpaper()
+                logging.info('Updated wallpaper')
                 
                 self.last_check = time.time()
                 self.total_auto_checks += 1
@@ -75,18 +68,24 @@ class DailyWallpaper:
         # update SRC to the n'th wallpaper
         r = self.session.get(self.root_url)
         
-        link = r.html.find('.post')[n].find('.entry-content')[0].find('a')[0].attrs['href']
-        
-        if (link.startswith('https://imgur.com')):
-            r = self.session.get(link)
+        link = r.html.find('.post')[n].find('a')[0].attrs['href']
+        print('Link is:', link)
+        r = self.session.get(link)
+        if link.startswith('https://imgur.com'):
             self.img_src = r.html.find('.image-placeholder')[0].attrs['src']
+        elif link.startswith('https://drive.google.com'):
+            self.img_src = 'https://drive.google.com/uc?id=' + link.split('/')[5]
+            print(self.img_src)
         else:
             self.img_src = link
         
         if self.img_src == None:
             self.img_src = self.img_src
             
-        filename = 'latest_wallpaper.' + self.img_src.split('/')[-1].split('.')[1]
+        try:
+            filename = 'latest_wallpaper.' + self.img_src.split('/')[-1].split('.')[1]
+        except:
+            filename = 'latest_wallpaper.png'
 
         response = self.session.get(self.img_src)
         if response.status_code == 200:
@@ -114,6 +113,5 @@ class DailyWallpaper:
 
         logging.info('Wallpaper set successfully!')
         
-    
 if __name__ == '__main__':
     DailyWallpaper().runTerminal()
