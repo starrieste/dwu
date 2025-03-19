@@ -1,2 +1,3 @@
 # DWU :3
-A daily wallpaper updater that sets your windows wallpaper to the latest wallpaper from https://wallpaper-a-day.com/
+A daily wallpaper updater that brings you a new waifu wallpaper every day!
+The wallpapers are from https://wallpaper-a-day.com/
