@@ -16,7 +16,8 @@ def run_terminal():
         elif user_input.startswith('set '):
             try:
                 n = int(user_input.split()[1])
-                dw.updateWallpaperImg(n)
+                dw.huntSRC(n)
+                dw.saveWallpaper()
                 dw.setWallpaper()
                 print("Successfully set wallpaper!")
             except ValueError:

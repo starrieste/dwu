@@ -1,6 +1,7 @@
 import os
 import sys
 import time
+import logging
 
 def log_crash(e):
     crash = [
@@ -9,7 +10,7 @@ def log_crash(e):
         str(e)
     ]
     crash_str = ''.join(crash)
-    print(crash_str)
+    logging.error(crash_str)
     timeX = str(time.time())
     os.makedirs("crashlogs", exist_ok=True)
     with open(f"crashlogs/CRASH-{timeX}.txt", "w") as logfile:

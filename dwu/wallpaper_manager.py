@@ -16,20 +16,21 @@ class WallpaperManager:
         self.total_auto_checks = 0
         
     def wallpaperCheckLoop(self):
-        print('Started auto wallpaper updater in the background')
+        logging.info('Started auto wallpaper updater in the background')
+        
         self.constant_check = True
         self.last_check = 0
         while self.constant_check:
             if time.time() - self.last_check >= 600:
-                self.updateWallpaperImg()
+                self.huntSRC()
                 self.setWallpaper()
                 logging.info('Updated wallpaper')
                 self.last_check = time.time()
                 self.total_auto_checks += 1
 
-        print('Stopped auto wallpaper updater')
+        logging.info('Stopped auto wallpaper updater')
 
-    def updateWallpaperImg(self, n=0):
+    def huntSRC(self, n=0):
         r = self.session.get(self.root_url)
         link = r.html.find('.post')[n].find('a')[0].attrs['href']
         r = self.session.get(link)
@@ -40,18 +41,17 @@ class WallpaperManager:
         else:
             self.img_src = link
 
-        # Fallback if self.img_src is None
-        if self.img_src is None:
-            logging.error('Image source not found.')
-            return
+    def saveWallpaper(self, src=None):
+        if src is None:
+            src = self.img_src
 
-        if self.img_src.endswith(('png', 'jpg', 'jpeg')):
-            ext = self.img_src.split('/')[-1].split('.')[-1]
+        if src.endswith(('png', 'jpg', 'jpeg')):
+            ext = src.split('/')[-1].split('.')[-1]
             filename = f'latest_wallpaper.{ext}'
         else:
             filename = 'latest_wallpaper.png'
 
-        response = self.session.get(self.img_src)
+        response = self.session.get(src)
         if response.status_code == 200:
             with open(filename, 'wb') as f:
                 f.write(response.content)

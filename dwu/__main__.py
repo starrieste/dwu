@@ -5,4 +5,4 @@ if __name__ == '__main__':
     try:
         run_terminal()
     except Exception as e:
-        log_crash(e)
+        log_crash(e)    
