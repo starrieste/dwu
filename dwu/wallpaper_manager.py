@@ -4,7 +4,7 @@ import logging
 import time
 from requests_html import HTMLSession
 
-class DailyWallpaper:
+class WallpaperManager:
     def __init__(self, root_url='https://wallpaper-a-day.com'): 
         self.session = HTMLSession()
         self.root_url = root_url

@@ -1,10 +1,10 @@
 import threading
 import time
-from .wallpaper_manager import DailyWallpaper
+from .wallpaper_manager import WallpaperManager
 
 def run_terminal():
     print('Welcome to DWU (pronounced dee-wu)!\nThe program that brings you a new waifu image every day :3')
-    dw = DailyWallpaper()
+    dw = WallpaperManager()
 
     while True:
         user_input = input('> ').lower().strip()
