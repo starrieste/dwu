@@ -12,23 +12,20 @@ class WallpaperManager:
         self.filename = None
         
         self.constant_check = False
+        
+    def wallpaperCheckLoop(self):
+        self.constant_check = True
+        self.starting_time = time.time()
         self.last_check = 0
         self.total_auto_checks = 0
         
-    def wallpaperCheckLoop(self):
-        logging.info('Started auto wallpaper updater in the background')
-        
-        self.constant_check = True
-        self.last_check = 0
         while self.constant_check:
             if time.time() - self.last_check >= 600:
                 self.huntSRC()
+                self.saveWallpaper()
                 self.setWallpaper()
-                logging.info('Updated wallpaper')
                 self.last_check = time.time()
                 self.total_auto_checks += 1
-
-        logging.info('Stopped auto wallpaper updater')
 
     def huntSRC(self, n=0):
         r = self.session.get(self.root_url)
@@ -72,4 +69,3 @@ class WallpaperManager:
 
         ctypes.windll.user32.SystemParametersInfoW(
             SPI_SETDESKWALLPAPER, 0, abs_path, SPIF_UPDATEINIFILE | SPIF_SENDCHANGE)
-        logging.info('Wallpaper set successfully!')
