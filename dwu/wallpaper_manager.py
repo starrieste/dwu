@@ -26,6 +26,11 @@ class WallpaperManager:
                 self.setWallpaper()
                 self.last_check = time.time()
                 self.total_auto_checks += 1
+                
+    def getSaveSet(self, n=0):
+        self.huntSRC(n)
+        self.saveWallpaper()
+        self.setWallpaper()
 
     def huntSRC(self, n=0):
         r = self.session.get(self.root_url)
