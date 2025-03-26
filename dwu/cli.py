@@ -2,7 +2,7 @@ import threading
 import time
 from .wallpaper_manager import WallpaperManager
 
-def run_terminal():
+def run_cli():
     print('Welcome to DWU (pronounced dee-wu)!\nThe program that brings you a new waifu image every day :3')
     wallman = WallpaperManager()
 
