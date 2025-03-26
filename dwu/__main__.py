@@ -1,4 +1,3 @@
-# bootstrap.py
 from dwu.cli import run_cli
 from dwu.utils import log_crash
 from dwu.gui import run_gui
