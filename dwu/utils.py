@@ -4,7 +4,12 @@ import time
 import logging
 
 def log_crash(e):
-    crash_str = f"Error on line {sys.exc_info()[-1].tb_lineno}: {str(e)}"
+    exc_type, exc_value, exc_traceback = sys.exc_info()
+    if exc_traceback:
+        crash_str = f"Error on line {exc_traceback.tb_lineno}: {str(e)}"
+    else:
+        crash_str = f"Error: {str(e)}"
+
     logging.error(crash_str)
     timeX = str(time.time())
     os.makedirs("crashlogs", exist_ok=True)
