@@ -16,7 +16,8 @@ class MainWindow(QMainWindow):
 
         # Set the central widget of the Window.
         self.setCentralWidget(self.wallupdate_button)
-        
+        self.QtWidgets
+
         self.wallman = WallpaperManager()
 
     def setWallpaper(self):
