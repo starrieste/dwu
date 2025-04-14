@@ -1,0 +1,8 @@
+latest_wallpaper.*
+__pycache__/
+logs/
+
+#  PyInstaller
+build/
+dist/
+*.spec
