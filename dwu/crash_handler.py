@@ -1,7 +1,6 @@
 import os
 import sys
 import time
-import logging
 
 def log_crash(e):
     exc_type, exc_value, exc_traceback = sys.exc_info()
