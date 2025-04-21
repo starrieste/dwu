@@ -1,3 +1,5 @@
+# THIS CODE IS NOT CURRENTLY IN USE
+
 import threading
 import time
 from .wallpaper_manager import WallpaperManager

@@ -14,20 +14,17 @@ class App():
         self.image = PIL.Image.open("icon.png")
         self.icon = pystray.Icon("test_icon", self.image, menu=pystray.Menu(
             pystray.MenuItem("Open GUI", self._on_clicked),
-            pystray.MenuItem("Close GUI", self._on_clicked),
             pystray.MenuItem("Exit", self._on_clicked)
         ))
         
         self.wallman = WallpaperManager()
         self.gui = GUI(self)
     
-    def _on_clicked(self, icon, item) -> None:
-        if str(item) == "Exit":
+    def _on_clicked(self, icon, label) -> None:
+        if str(label) == "Exit":
             self._quit()
-        elif str(item) == "Open GUI":
+        elif str(label) == "Open GUI":
             self.gui.show_gui()
-        elif str(item) == "Close GUI":
-            self.gui.hide_gui()
     
     def _quit(self):
         self.wallman.stop_check_loop()

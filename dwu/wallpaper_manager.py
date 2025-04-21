@@ -54,6 +54,12 @@ class WallpaperManager:
         
     def stop_check_loop(self) -> None:
         self._queued_state = False
+    
+    def toggle_check_loop(self) -> None:
+        if self._in_progress:
+            self._queued_state = False
+        elif not self._in_progress:
+            threading.Thread(target=self._wallpaper_check_loop, daemon=True).start()
 
     def _fetch_image_source(self, post_index: int = 0) -> None:
         try:

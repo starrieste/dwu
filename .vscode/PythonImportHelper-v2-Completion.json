@@ -1,0 +1,304 @@
+[
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "sys",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "sys",
+        "description": "sys",
+        "detail": "sys",
+        "documentation": {}
+    },
+    {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "pystray",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pystray",
+        "description": "pystray",
+        "detail": "pystray",
+        "documentation": {}
+    },
+    {
+        "label": "PIL.Image",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "PIL.Image",
+        "description": "PIL.Image",
+        "detail": "PIL.Image",
+        "documentation": {}
+    },
+    {
+        "label": "WallpaperManager",
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "isExtraImport": true,
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "QApplication",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QMainWindow",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QVBoxLayout",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QPushButton",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QWidget",
+        "importPath": "PyQt6.QtWidgets",
+        "description": "PyQt6.QtWidgets",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtWidgets",
+        "documentation": {}
+    },
+    {
+        "label": "QTimer",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "pyqtSignal",
+        "importPath": "PyQt6.QtCore",
+        "description": "PyQt6.QtCore",
+        "isExtraImport": true,
+        "detail": "PyQt6.QtCore",
+        "documentation": {}
+    },
+    {
+        "label": "time",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "time",
+        "description": "time",
+        "detail": "time",
+        "documentation": {}
+    },
+    {
+        "label": "logging",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "logging",
+        "description": "logging",
+        "detail": "logging",
+        "documentation": {}
+    },
+    {
+        "label": "annotations",
+        "importPath": "__future__",
+        "description": "__future__",
+        "isExtraImport": true,
+        "detail": "__future__",
+        "documentation": {}
+    },
+    {
+        "label": "ctypes",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "ctypes",
+        "description": "ctypes",
+        "detail": "ctypes",
+        "documentation": {}
+    },
+    {
+        "label": "Optional",
+        "importPath": "typing",
+        "description": "typing",
+        "isExtraImport": true,
+        "detail": "typing",
+        "documentation": {}
+    },
+    {
+        "label": "HTMLSession",
+        "importPath": "requests_html",
+        "description": "requests_html",
+        "isExtraImport": true,
+        "detail": "requests_html",
+        "documentation": {}
+    },
+    {
+        "label": "log_crash",
+        "importPath": "dwu.crash_handler",
+        "description": "dwu.crash_handler",
+        "isExtraImport": true,
+        "detail": "dwu.crash_handler",
+        "documentation": {}
+    },
+    {
+        "label": "*",
+        "importPath": "dwu.app",
+        "description": "dwu.app",
+        "isExtraImport": true,
+        "detail": "dwu.app",
+        "documentation": {}
+    },
+    {
+        "label": "App",
+        "kind": 6,
+        "importPath": "dwu.app",
+        "description": "dwu.app",
+        "peekOfCode": "class App():\n    def __init__(self):\n        self.image = PIL.Image.open(\"icon.png\")\n        self.icon = pystray.Icon(\"test_icon\", self.image, menu=pystray.Menu(\n            pystray.MenuItem(\"Open GUI\", self._on_clicked),\n            pystray.MenuItem(\"Exit\", self._on_clicked)\n        ))\n        self.wallman = WallpaperManager()\n        self.gui = GUI(self)\n    def _on_clicked(self, icon, label) -> None:",
+        "detail": "dwu.app",
+        "documentation": {}
+    },
+    {
+        "label": "run_app",
+        "kind": 2,
+        "importPath": "dwu.app",
+        "description": "dwu.app",
+        "peekOfCode": "def run_app():\n    qapp = QApplication(sys.argv)\n    app = App()\n    threading.Thread(target=app.icon.run, daemon=True).start()\n    sys.exit(qapp.exec())",
+        "detail": "dwu.app",
+        "documentation": {}
+    },
+    {
+        "label": "run_cli",
+        "kind": 2,
+        "importPath": "dwu.cli",
+        "description": "dwu.cli",
+        "peekOfCode": "def run_cli():\n    print('Welcome to DWU (pronounced dee-wu)!\\nThe program that brings you a new waifu image every day :3')\n    wallman = WallpaperManager()\n    while True:\n        user_input = input('> ').lower().strip()\n        if not user_input:\n            continue\n        elif user_input in ('exit', 'e'):\n            print('Exiting...')\n            break",
+        "detail": "dwu.cli",
+        "documentation": {}
+    },
+    {
+        "label": "log_crash",
+        "kind": 2,
+        "importPath": "dwu.crash_handler",
+        "description": "dwu.crash_handler",
+        "peekOfCode": "def log_crash(e):\n    exc_type, exc_value, exc_traceback = sys.exc_info()\n    if exc_traceback:\n        crash_str = f\"Error on line {exc_traceback.tb_lineno}: {str(e)}\"\n    else:\n        crash_str = f\"Error: {str(e)}\"\n    print(crash_str)\n    timeX = str(time.time())\n    os.makedirs(\"logs/crash\", exist_ok=True)\n    with open(f\"logs/crash/{timeX}.txt\", \"w\") as logfile:",
+        "detail": "dwu.crash_handler",
+        "documentation": {}
+    },
+    {
+        "label": "GUI",
+        "kind": 6,
+        "importPath": "dwu.gui",
+        "description": "dwu.gui",
+        "peekOfCode": "class GUI(QMainWindow):\n    show_signal = pyqtSignal()\n    hide_signal = pyqtSignal()\n    def __init__(self, st):\n        super().__init__()\n        self.st = st\n        self.setWindowTitle(\"Wallpaper Manager\")\n        self.setGeometry(300, 300, 300, 70)\n        central_widget = QWidget()\n        self.setCentralWidget(central_widget)",
+        "detail": "dwu.gui",
+        "documentation": {}
+    },
+    {
+        "label": "WallpaperError",
+        "kind": 6,
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "peekOfCode": "class WallpaperError(Exception):\n    pass\nclass ImageDownloadError(WallpaperError):\n    pass\nclass WallpaperSetError(WallpaperError):\n    pass\nclass WallpaperManager:\n    def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:\n        self._session = HTMLSession()\n        self._root_url = root_url",
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "ImageDownloadError",
+        "kind": 6,
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "peekOfCode": "class ImageDownloadError(WallpaperError):\n    pass\nclass WallpaperSetError(WallpaperError):\n    pass\nclass WallpaperManager:\n    def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:\n        self._session = HTMLSession()\n        self._root_url = root_url\n        self._img_src: Optional[str] = None\n        self._filename: Optional[str] = None",
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "WallpaperSetError",
+        "kind": 6,
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "peekOfCode": "class WallpaperSetError(WallpaperError):\n    pass\nclass WallpaperManager:\n    def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:\n        self._session = HTMLSession()\n        self._root_url = root_url\n        self._img_src: Optional[str] = None\n        self._filename: Optional[str] = None\n        self._queued_state: bool = False\n        self._in_progress: bool = False",
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "WallpaperManager",
+        "kind": 6,
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "peekOfCode": "class WallpaperManager:\n    def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:\n        self._session = HTMLSession()\n        self._root_url = root_url\n        self._img_src: Optional[str] = None\n        self._filename: Optional[str] = None\n        self._queued_state: bool = False\n        self._in_progress: bool = False\n        self._starting_time: float = 0\n        self._last_check: float = 0",
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "UPDATE_INTERVAL",
+        "kind": 5,
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "peekOfCode": "UPDATE_INTERVAL = 5\nSPI_SETDESKWALLPAPER = 20\nSPIF_UPDATEINIFILE = 0x01\nSPIF_SENDCHANGE = 0x02\nclass WallpaperError(Exception):\n    pass\nclass ImageDownloadError(WallpaperError):\n    pass\nclass WallpaperSetError(WallpaperError):\n    pass",
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "SPI_SETDESKWALLPAPER",
+        "kind": 5,
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "peekOfCode": "SPI_SETDESKWALLPAPER = 20\nSPIF_UPDATEINIFILE = 0x01\nSPIF_SENDCHANGE = 0x02\nclass WallpaperError(Exception):\n    pass\nclass ImageDownloadError(WallpaperError):\n    pass\nclass WallpaperSetError(WallpaperError):\n    pass\nclass WallpaperManager:",
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "SPIF_UPDATEINIFILE",
+        "kind": 5,
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "peekOfCode": "SPIF_UPDATEINIFILE = 0x01\nSPIF_SENDCHANGE = 0x02\nclass WallpaperError(Exception):\n    pass\nclass ImageDownloadError(WallpaperError):\n    pass\nclass WallpaperSetError(WallpaperError):\n    pass\nclass WallpaperManager:\n    def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:",
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "SPIF_SENDCHANGE",
+        "kind": 5,
+        "importPath": "dwu.wallpaper_manager",
+        "description": "dwu.wallpaper_manager",
+        "peekOfCode": "SPIF_SENDCHANGE = 0x02\nclass WallpaperError(Exception):\n    pass\nclass ImageDownloadError(WallpaperError):\n    pass\nclass WallpaperSetError(WallpaperError):\n    pass\nclass WallpaperManager:\n    def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:\n        self._session = HTMLSession()",
+        "detail": "dwu.wallpaper_manager",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def main():\n    try:\n        run_app()\n    except Exception as e:\n        log_crash(e)\nif __name__ == \"__main__\":\n    main()",
+        "detail": "main",
+        "documentation": {}
+    }
+]
