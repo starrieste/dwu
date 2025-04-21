@@ -9,6 +9,7 @@ __pycache__/
 build/
 dist/
 *.spec
+main.exe
 
 # Other
 .vscode/
