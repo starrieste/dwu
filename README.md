@@ -15,7 +15,7 @@ Only windows is supported, only tested on Windows 11.
 3. Run dwu.exe
 
 ## Usage
-After running the executable, the program will be an icon in your system tray.  
-Right click it to open the GUI and for more options.  
-The program will update the wallpaper every 10 minutes, if the "check loop" is turned on.  
-You can turn on "Run at startup" to make the program start with your computer.  
+After running the executable, the program will be an icon in your system tray.
+Right click it to open the GUI and for more options.
+The program will update the wallpaper every 10 minutes, if the "check loop" is turned on.
+You can turn on "Run at startup" to make the program start with your computer.
