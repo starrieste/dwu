@@ -1,9 +1,5 @@
-import threading
 from dwu.crash_handler import log_crash
 from dwu.app import *
-
-from PyQt6.QtWidgets import QApplication
-import sys
 
 def main():
     try:
