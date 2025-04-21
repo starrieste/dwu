@@ -8,8 +8,8 @@ __pycache__/
 #  PyInstaller
 build/
 dist/
-main.exe
-main.spec
+*.exe
+*.spec
 
 # Other
 .vscode/
