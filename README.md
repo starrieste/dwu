@@ -9,6 +9,12 @@ Only windows is supported, only tested on Windows 11.
 - Automatic wallpaper updates as long as it's running
 - Run automatically on startup!
 
+## Compiling From Source
+1. Install python
+2. Clone the repository
+3. Install the required modules with `pip -r requirements.txt`
+4. Compile with `pyinstaller --onefile -w --icon=icon.png --name=dwu --distpath . main.py`
+
 ## Installation
 1. Download the desired version
 2. Extract the zip file's contents to its own folder
