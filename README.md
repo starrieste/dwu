@@ -10,5 +10,5 @@ Only windows is supported, only tested on Windows 11.
 - Run automatically on startup!
 
 ## Running source code
-Install required dependencies and then run main.py
+Install required dependencies and then run main.py.
 Instructions for release to be added.
