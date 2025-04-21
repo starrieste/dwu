@@ -1,35 +1,34 @@
-import sys
 from PyQt6.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QPushButton
+    QMainWindow, QVBoxLayout, QPushButton, QWidget
 )
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
 
-from .wallpaper_manager import WallpaperManager
-
-app = QApplication(sys.argv) 
-
-class GUI(QWidget):
+class GUI(QMainWindow):
     def __init__(self, st):
         super().__init__()
-
+        
+        self.st = st
         self.setWindowTitle("Wallpaper Manager")
-        self.setGeometry(100, 100, 300, 150)
+        self.setGeometry(300, 300, 300, 150)
+
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
 
         layout = QVBoxLayout()
 
-        btn1 = QPushButton("Update Wallpaper")
-        btn2 = QPushButton("Start check loop")
-        btn3 = QPushButton("Stop check loop")
+        self.btn1 = QPushButton("Update Wallpaper")
+        self.btn2 = QPushButton("Start check loop")
+        self.btn3 = QPushButton("Stop check loop")
 
-        btn1.clicked.connect(st.wallman.update_wallpaper)
-        btn2.clicked.connect(st.wallman.start_check_loop)
-        btn3.clicked.connect(st.wallman.stop_check_loop)
+        self.btn1.clicked.connect(self.st.wallman.update_wallpaper)
+        self.btn2.clicked.connect(self.st.wallman.start_check_loop)
+        self.btn3.clicked.connect(self.st.wallman.stop_check_loop)
 
-        layout.addWidget(btn1)
-        layout.addWidget(btn2)
-        layout.addWidget(btn3)
+        layout.addWidget(self.btn1)
+        layout.addWidget(self.btn2)
+        layout.addWidget(self.btn3)
 
-        self.setLayout(layout)
+        central_widget.setLayout(layout)
+
         self.show()
 
     def hide_gui(self):
@@ -37,7 +36,9 @@ class GUI(QWidget):
 
     def show_gui(self):
         self.show()
-        
-    def quit(self):
-        self.close()
-        QApplication.quit()
+        self.activateWindow()
+        self.raise_()
+
+    def closeEvent(self, event):
+        self.hide()
+        event.ignore()

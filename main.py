@@ -1,10 +1,13 @@
-from dwu.utils import log_crash
-from dwu.systray import TrayIcon
+import threading
+from dwu.crash_handler import log_crash
+from dwu.app import *
+
+from PyQt6.QtWidgets import QApplication
+import sys
 
 def main():
     try:
-        tray_icon = TrayIcon()
-        tray_icon.run()
+        run_app()
     except Exception as e:
         log_crash(e)
 

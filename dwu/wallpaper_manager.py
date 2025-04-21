@@ -117,6 +117,9 @@ class WallpaperManager:
             current_time = time.time()
             if current_time - self._last_check >= UPDATE_INTERVAL:
                 self.update_wallpaper()
+                print("Auto-updated wallpaper!")
+                
                 self._last_check = current_time
                 self._total_auto_checks += 1
+                
         self._in_progress = False

@@ -10,7 +10,7 @@ def log_crash(e):
     else:
         crash_str = f"Error: {str(e)}"
 
-    logging.error(crash_str)
+    print(crash_str)
     
     timeX = str(time.time())
     os.makedirs("logs/crash", exist_ok=True)
