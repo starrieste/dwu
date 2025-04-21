@@ -28,7 +28,6 @@ class App():
             self._quit()
         
     def _toggle_startup(self, icon, label) -> None:
-        import winshell
         from win32com.client import Dispatch
 
         startup_path = os.path.join(os.getenv('APPDATA'), 'Microsoft\\Windows\\Start Menu\\Programs\\Startup\\dwu.lnk')
