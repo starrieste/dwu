@@ -2,7 +2,7 @@
 
 DWU is a Python application that updates your desktop wallpaper daily with a new waifu image from  
 [wallpaper-a-day.com](https://wallpaper-a-day.com).  
-Only windows is supported, only tested on Windows 11.
+Only Windows is supported, only tested on Windows 11.
 
 ## Features
 - A GUI control panel made using PyQt6
