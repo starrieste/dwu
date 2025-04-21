@@ -6,7 +6,7 @@ import time
 from typing import Optional
 from requests_html import HTMLSession
 
-UPDATE_INTERVAL = 5
+UPDATE_INTERVAL = 600
 SPI_SETDESKWALLPAPER = 20
 SPIF_UPDATEINIFILE = 0x01
 SPIF_SENDCHANGE = 0x02
@@ -119,7 +119,7 @@ class WallpaperManager:
         self._in_progress = True
         self._queued_state = True
         while self._queued_state:
-            time.sleep(1)
+            time.sleep(600)
             current_time = time.time()
             if current_time - self._last_check >= UPDATE_INTERVAL:
                 self.update_wallpaper()

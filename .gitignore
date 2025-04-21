@@ -6,3 +6,6 @@ logs/
 build/
 dist/
 *.spec
+
+# Other
+.vscode/

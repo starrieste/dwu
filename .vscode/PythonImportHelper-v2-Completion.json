@@ -261,7 +261,7 @@
         "kind": 5,
         "importPath": "dwu.wallpaper_manager",
         "description": "dwu.wallpaper_manager",
-        "peekOfCode": "UPDATE_INTERVAL = 5\nSPI_SETDESKWALLPAPER = 20\nSPIF_UPDATEINIFILE = 0x01\nSPIF_SENDCHANGE = 0x02\nclass WallpaperError(Exception):\n    pass\nclass ImageDownloadError(WallpaperError):\n    pass\nclass WallpaperSetError(WallpaperError):\n    pass",
+        "peekOfCode": "UPDATE_INTERVAL = 600\nSPI_SETDESKWALLPAPER = 20\nSPIF_UPDATEINIFILE = 0x01\nSPIF_SENDCHANGE = 0x02\nclass WallpaperError(Exception):\n    pass\nclass ImageDownloadError(WallpaperError):\n    pass\nclass WallpaperSetError(WallpaperError):\n    pass",
         "detail": "dwu.wallpaper_manager",
         "documentation": {}
     },
