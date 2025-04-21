@@ -1,6 +1,9 @@
+# DWU
 latest_wallpaper.*
-__pycache__/
 logs/
+
+# Python
+__pycache__/
 
 #  PyInstaller
 build/

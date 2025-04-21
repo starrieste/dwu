@@ -119,11 +119,11 @@ class WallpaperManager:
         self._in_progress = True
         self._queued_state = True
         while self._queued_state:
-            time.sleep(600)
             current_time = time.time()
             if current_time - self._last_check >= UPDATE_INTERVAL:
                 self.update_wallpaper()
                 self._last_check = current_time
                 self._total_auto_checks += 1
+            time.sleep(600)
                 
         self._in_progress = False
