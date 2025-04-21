@@ -9,7 +9,13 @@ Only windows is supported, only tested on Windows 11.
 - Automatic wallpaper updates as long as it's running
 - Run automatically on startup!
 
-## Running source code
-Install required dependencies and then run main.py  
+## Installation
+1. Download the desired version
+2. Extract the zip file's contents to its own folder
+3. Run dwu.exe
 
-Instructions for release to be added.
+## Usage
+After running the executable, the program will be an icon in your system tray.  
+Right click it to open the GUI and for more options.  
+The program will update the wallpaper every 10 minutes, if the "check loop" is turned on.  
+You can turn on "Run at startup" to make the program start with your computer.  
