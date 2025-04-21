@@ -9,7 +9,7 @@ class GUI(QMainWindow):
         super().__init__()
         
         self.st = st
-        self.setWindowTitle("Wallpaper Manager")
+        self.setWindowTitle("DWU :3")
         self.setGeometry(300, 300, 300, 70)
 
         central_widget = QWidget()
