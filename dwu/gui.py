@@ -1,5 +1,6 @@
 from PyQt6.QtWidgets import QMainWindow, QVBoxLayout, QPushButton, QWidget
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QIcon
 
 class GUI(QMainWindow):
     show_signal = pyqtSignal()
@@ -10,6 +11,7 @@ class GUI(QMainWindow):
         
         self.st = st
         self.setWindowTitle("DWU :3")
+        self.setWindowIcon(QIcon("icon.png"))
         self.setGeometry(300, 300, 300, 70)
 
         central_widget = QWidget()
