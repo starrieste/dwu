@@ -22,7 +22,7 @@ pyinstaller --distpath . main.spec
 ```
 
 ## Installation Using Binaries
-1. Download the desired version
+1. Download the desired release from this repository
 2. Extract the zip file's contents to its own folder
 3. Run dwu.exe
 
