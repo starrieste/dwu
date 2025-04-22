@@ -1,6 +1,7 @@
 # DWU - Daily Wallpaper Updater
 
-DWU is a Python application that updates your Windows 11 desktop background daily with a new anime wallpaper from [wallpaper-a-day.com](https://wallpaper-a-day.com).  
+DWU (pronounced dee-woo) is a Python application that updates your Windows 11 desktop background daily to a new anime wallpaper courtesy of [wallpaper-a-day.com](https://wallpaper-a-day.com).  
+It can run on startup and stays out of your way in the system tray :3
 
 ## Features
 - A GUI control panel made using PyQt6
