@@ -9,7 +9,6 @@ __pycache__/
 build/
 dist/
 *.exe
-*.spec
 
 # Other
 .vscode/

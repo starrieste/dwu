@@ -17,7 +17,7 @@ pip -r requirements.txt
 ```
 4. Compile using pyinstaller
 ```
-pyinstaller --onefile -w --icon=icon.png --name=dwu --distpath . main.py
+pyinstaller --distpath . main.py
 ```
 
 ## Installation Using Binaries
