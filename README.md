@@ -17,7 +17,7 @@ pip -r requirements.txt
 ```
 4. Compile using pyinstaller
 ```
-pyinstaller --distpath . main.py
+pyinstaller --distpath . main.spec
 ```
 
 ## Installation Using Binaries
