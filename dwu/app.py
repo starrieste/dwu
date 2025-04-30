@@ -56,7 +56,7 @@ class App():
         self.icon.stop()
         QTimer.singleShot(0, QApplication.quit)
         os._exit(0)
-    
+
 def run_app():
     qapp = QApplication(sys.argv)
     app = App()

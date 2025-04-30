@@ -39,8 +39,6 @@ class WallpaperManager:
     def _update_wallpaper(self, post_index: int = 0) -> None:
         try:
             self._fetch_image_source(post_index)
-            if not self._img_src:
-                raise ImageDownloadError("No image source found")
             self._save_wallpaper()
             self._set_wallpaper()
         except Exception as e:
@@ -64,20 +62,28 @@ class WallpaperManager:
     def _fetch_image_source(self, post_index: int = 0) -> None:
         try:
             response = self._session.get(self._root_url)
+            
             posts = response.html.find('.post')
+            
             if not posts or (post_index >= len(posts)):
                 raise ImageDownloadError(f"No post found at index {post_index}")
+            
             link = posts[post_index].find('a')[0].attrs.get('href')
             if not link:
                 raise ImageDownloadError("No link found in post")
+            
+            # next link
             response = self._session.get(link)
             if link.startswith('https://imgur.com'):
                 placeholder = response.html.find('.image-placeholder')
                 self._img_src = placeholder[0].attrs['src'] if placeholder else None
+
             elif link.startswith('https://drive.google.com'):
                 self._img_src = f'https://drive.google.com/uc?id={link.split("/")[5]}'
-            else:
+
+            else: # assume the first image on this site is the right one
                 self._img_src = link
+                
         except Exception as e:
             raise ImageDownloadError(f"Failed to fetch image source: {str(e)}")
 
