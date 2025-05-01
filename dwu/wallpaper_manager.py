@@ -6,6 +6,8 @@ import time
 from typing import Optional
 from requests_html import HTMLSession
 
+from dwu.logger import logger
+
 UPDATE_INTERVAL = 600
 SPI_SETDESKWALLPAPER = 20
 SPIF_UPDATEINIFILE = 0x01
@@ -42,11 +44,12 @@ class WallpaperManager:
             self._save_wallpaper()
             self._set_wallpaper()
         except Exception as e:
+            logger.exception(f"Failed to update wallpaper")
             raise WallpaperError(f"Failed to update wallpaper: {str(e)}")
     
     def start_check_loop(self) -> None:
         if self._in_progress: 
-            print("Check loop is already running!")
+            logger.info("Check loop is already running!")
             return
         threading.Thread(target=self._wallpaper_check_loop, daemon=True).start()
         
@@ -85,10 +88,12 @@ class WallpaperManager:
                 self._img_src = link
                 
         except Exception as e:
+            logger.exception(f"Failed to fetch image source")
             raise ImageDownloadError(f"Failed to fetch image source: {str(e)}")
 
     def _save_wallpaper(self) -> None:
         if not self._img_src:
+            logger.exception(f"No image source available")
             raise ImageDownloadError("No image source available")
         try:
             ext = 'png'
@@ -101,6 +106,7 @@ class WallpaperManager:
             with open(self._filename, 'wb') as f:
                 f.write(response.content)
         except Exception as e:
+            logger.exception(f"Failed to save wallpapaer")
             raise ImageDownloadError(f"Failed to save wallpaper: {str(e)}")
 
     def _set_wallpaper(self) -> None:
@@ -113,8 +119,10 @@ class WallpaperManager:
                 SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
             )
             if not result:
+                logger.exception("Failed to set wallpaper using Windows API")
                 raise WallpaperSetError("Failed to set wallpaper using Windows API")
         except Exception as e:
+            logger.exception(f"Failed to set wallpaper")
             raise WallpaperSetError(f"Failed to set wallpaper: {str(e)}")
     
     def _wallpaper_check_loop(self) -> None:
