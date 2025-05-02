@@ -1,12 +1,12 @@
 import logging
 import os
-from datetime import datetime
+import time
 
 # Create logs directory
 os.makedirs("logs", exist_ok=True)
 
 # Log file for the current session
-log_filename = f"logs/session_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.log"
+log_filename = f"logs/{int(time.time())}.log"
 
 # Configure the logger
 logging.basicConfig(
