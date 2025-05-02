@@ -8,7 +8,7 @@ from requests_html import HTMLSession
 
 from dwu.logger import logger
 
-UPDATE_INTERVAL = 600
+UPDATE_INTERVAL = 1800
 SPI_SETDESKWALLPAPER = 20
 SPIF_UPDATEINIFILE = 0x01
 SPIF_SENDCHANGE = 0x02
