@@ -138,6 +138,7 @@ class WallpaperManager:
                 self.update_wallpaper()
                 self._last_check = current_time
                 self._total_auto_checks += 1
+                logger.info("Automatically updated wallpaper!")
             time.sleep(1)
                 
         self._in_progress = False
