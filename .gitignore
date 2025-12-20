@@ -1,0 +1,14 @@
+# DWU
+latest_wallpaper.*
+logs/
+
+# Python
+__pycache__/
+
+#  PyInstaller
+build/
+dist/
+*.exe
+
+# Other
+.vscode/

@@ -1,0 +1,6 @@
+PyQt6
+Pillow
+pystray
+requests-html
+pywin32
+pyinstaller
