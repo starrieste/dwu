@@ -1,0 +1,6 @@
+[Unit]
+Description=DWU wallpaper updater
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/dwu --daily

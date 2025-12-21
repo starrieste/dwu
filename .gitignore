@@ -4,6 +4,9 @@ current_wallpaper.*
 *.jpg
 *.jpeg
 
+*.tar.gz
+*.whl
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
