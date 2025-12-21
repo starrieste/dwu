@@ -1,2 +1,2 @@
-Pillow
-requests-html
+click
+requests_html

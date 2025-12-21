@@ -6,8 +6,6 @@ import time
 from typing import Optional
 from requests_html import HTMLSession
 
-from dwu.logger import logger
-
 UPDATE_INTERVAL = 1800
 SPI_SETDESKWALLPAPER = 20
 SPIF_UPDATEINIFILE = 0x01
@@ -34,28 +32,24 @@ class WallpaperManager:
         self._starting_time: float = 0
         self._last_check: float = 0
         self._total_auto_checks: int = 0
-    
+
     def update_wallpaper(self, post_index: int = 0) -> None:
         threading.Thread(target=self._update_wallpaper, args=(post_index,), daemon=True).start()
 
     def _update_wallpaper(self, post_index: int = 0) -> None:
-        try:
-            self._fetch_image_source(post_index)
-            self._save_wallpaper()
-            self._set_wallpaper()
-        except Exception as e:
-            logger.exception(f"Failed to update wallpaper")
-            raise WallpaperError(f"Failed to update wallpaper: {str(e)}")
-    
+        self._fetch_image_source(post_index)
+        self._save_wallpaper()
+        self._set_wallpaper()
+
     def start_check_loop(self) -> None:
-        if self._in_progress: 
-            logger.info("Check loop is already running!")
+        if self._in_progress:
+            print("Check loop is already running!")
             return
         threading.Thread(target=self._wallpaper_check_loop, daemon=True).start()
-        
+
     def stop_check_loop(self) -> None:
         self._queued_state = False
-    
+
     def toggle_check_loop(self) -> None:
         if self._in_progress:
             self._queued_state = False
@@ -65,16 +59,16 @@ class WallpaperManager:
     def _fetch_image_source(self, post_index: int = 0) -> None:
         try:
             response = self._session.get(self._root_url)
-            
+
             posts = response.html.find('.post')
-            
+
             if not posts or (post_index >= len(posts)):
                 raise ImageDownloadError(f"No post found at index {post_index}")
-            
+
             link = posts[post_index].find('a')[0].attrs.get('href')
             if not link:
                 raise ImageDownloadError("No link found in post")
-            
+
             # next link
             response = self._session.get(link)
             if link.startswith('https://imgur.com'):
@@ -86,14 +80,14 @@ class WallpaperManager:
 
             else: # assume the first image on this site is the right one
                 self._img_src = link
-                
+
         except Exception as e:
-            logger.exception(f"Failed to fetch image source")
+            print(f"Failed to fetch image source")
             raise ImageDownloadError(f"Failed to fetch image source: {str(e)}")
 
     def _save_wallpaper(self) -> None:
         if not self._img_src:
-            logger.exception(f"No image source available")
+            print(f"No image source available")
             raise ImageDownloadError("No image source available")
         try:
             ext = 'png'
@@ -106,7 +100,7 @@ class WallpaperManager:
             with open(self._filename, 'wb') as f:
                 f.write(response.content)
         except Exception as e:
-            logger.exception(f"Failed to save wallpapaer")
+            print(f"Failed to save wallpapaer")
             raise ImageDownloadError(f"Failed to save wallpaper: {str(e)}")
 
     def _set_wallpaper(self) -> None:
@@ -119,12 +113,12 @@ class WallpaperManager:
                 SPIF_UPDATEINIFILE | SPIF_SENDCHANGE
             )
             if not result:
-                logger.exception("Failed to set wallpaper using Windows API")
+                print("Failed to set wallpaper using Windows API")
                 raise WallpaperSetError("Failed to set wallpaper using Windows API")
         except Exception as e:
-            logger.exception(f"Failed to set wallpaper")
+            print(f"Failed to set wallpaper")
             raise WallpaperSetError(f"Failed to set wallpaper: {str(e)}")
-    
+
     def _wallpaper_check_loop(self) -> None:
         self._starting_time = time.time()
         self._last_check = 0
@@ -138,7 +132,7 @@ class WallpaperManager:
                 self.update_wallpaper()
                 self._last_check = current_time
                 self._total_auto_checks += 1
-                logger.info("Automatically updated wallpaper!")
+                print("Automatically updated wallpaper!")
             time.sleep(1)
-                
+
         self._in_progress = False
