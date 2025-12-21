@@ -1,5 +1,6 @@
 import click
 from .splash import splash
+from .wallpaper_manager import WallpaperManager
 
 @click.command()
 @click.option('--version', is_flag=True, help='Output current version')
@@ -11,7 +12,7 @@ def cli(version: bool = False, daily: bool = False):
         click.echo("DWU (Daily Wallpaper Updater) 0.1.0")
         show_splash = False
     if daily:
-        # TODO: update wallpaper here
+        wallman.update_wallpaper()
         click.echo("Wallpaper updated!")
         show_splash = False
 
@@ -19,4 +20,5 @@ def cli(version: bool = False, daily: bool = False):
         click.echo(splash)
 
 if __name__ == '__main__':
+    wallman = WallpaperManager()
     cli()
