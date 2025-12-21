@@ -1,6 +1,8 @@
 # DWU
-latest_wallpaper.*
-logs/
+current_wallpaper.*
+*.png
+*.jpg
+*.jpeg
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

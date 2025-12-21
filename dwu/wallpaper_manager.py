@@ -80,7 +80,7 @@ class WallpaperManager:
 
     def _download_image(self, url: str) -> str:
         ext = self._infer_extension(url)
-        filename = f"latest_wallpaper.{ext}"
+        filename = f"current_wallpaper.{ext}"
         
         response = self._client.get(url)
         if response.status_code != 200:
