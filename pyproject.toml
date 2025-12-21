@@ -24,3 +24,6 @@ dwu = "dwu.__main__:main"
 
 [project.urls]
 Repository = "https://github.com/starrieste/dwu"
+
+[tool.setuptools]
+packages = ["dwu"]
