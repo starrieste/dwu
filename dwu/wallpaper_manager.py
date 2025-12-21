@@ -5,6 +5,8 @@ from urllib.parse import urlparse
 import httpx
 from selectolax.parser import HTMLParser
 
+import subprocess
+
 class WallpaperError(Exception):
     pass
 
@@ -103,4 +105,21 @@ class WallpaperManager:
             raise WallpaperSetError("Wallpaper file not found")
             
         abs_path = os.path.abspath(filename)
-        print(abs_path)
+        try:
+            subprocess.run(
+                [
+                    "awww", "img", abs_path,
+                    "--transition-type", "any",
+                    "--transition-step", "63",
+                    "--transition-duration", "2",
+                    "--transition-fps", "60"
+                ],
+                check=True,
+                capture_output=True,
+                text=True
+            )
+            print(f"Wallpaper set successfully: {abs_path}")
+        except FileNotFoundError:
+            raise WallpaperSetError("swww command not found. Is it installed?")
+        except subprocess.CalledProcessError as e:
+            raise WallpaperSetError(f"swww failed: {e.stderr}")
