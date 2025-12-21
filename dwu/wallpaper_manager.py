@@ -120,6 +120,6 @@ class WallpaperManager:
             )
             print(f"Wallpaper set successfully: {abs_path}")
         except FileNotFoundError:
-            raise WallpaperSetError("swww command not found. Is it installed?")
+            raise WallpaperSetError("awww command not found. please install awww.")
         except subprocess.CalledProcessError as e:
-            raise WallpaperSetError(f"swww failed: {e.stderr}")
+            raise WallpaperSetError(f"awww failed: {e.stderr}")

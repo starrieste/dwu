@@ -21,6 +21,7 @@ dependencies = [
 
 [project.scripts]
 dwu = "dwu.__main__:main"
+dwu-daemon = "dwu.daemon:run"
 
 [project.urls]
 Repository = "https://github.com/starrieste/dwu"
