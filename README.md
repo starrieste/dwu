@@ -23,5 +23,5 @@ dwu --daily
 For automatic hourly updates, use systemctl
 
 ```bash
-systemctl --user enable --now dwu
+systemctl --user enable --now dwu.timer
 ```
