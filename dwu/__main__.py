@@ -12,7 +12,7 @@ def print_version(ctx, param, value):
 @click.option('--version', is_flag=True, expose_value=False, callback=print_version, is_eager=True, help="Output current version")
 @click.option('--daily', is_flag=True, help="Set today\'s Wallpaper")
 
-def cli(daily: bool):
+def main(daily: bool):
     wallman = WallpaperManager()
     show_splash: bool = True
     
@@ -25,4 +25,4 @@ def cli(daily: bool):
         click.echo(splash)
 
 if __name__ == '__main__':
-    cli()
+    main()

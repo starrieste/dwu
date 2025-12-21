@@ -1,6 +1,5 @@
 from __future__ import annotations
 import os
-from typing import Optional
 from urllib.parse import urlparse
 
 import httpx
