@@ -1,7 +1,7 @@
 # DWU - Daily Wallpaper Updater
 
 DWU is a CLI tool written in python that updates your desktop wallpaper daily to the latest anime wallpaper from [wallpaper-a-day.com](https://wallpaper-a-day.com)  
-This project currently only supports Arch-based distros wit systemd (for hourly updates) and wayland (for awww setting wallpapers)
+This project currently only supports Arch-based distros with systemd (for hourly updates) and wayland (for awww setting wallpapers)
 
 ## Installation
 
