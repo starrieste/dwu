@@ -51,30 +51,30 @@ class WallpaperManager:
         return self._get_img_src(post)
 
     def _get_img_src(self, post) -> str:
-        img_src = post.css_first("img").attributes.get("data-orig-file")
-        if not img_src:
+        img_url = post.css_first("img").attributes.get("data-orig-file")
+        if not img_url:
             raise ImageDownloadError("Image source could not be resolved")
 
-        return img_src
+        return img_url
         
-    def _download_image(self, url: str) -> str:
+    def _download_image(self, img_url: str) -> str:
         cache_dir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
         app_cache = os.path.join(cache_dir, 'dwu')
         os.makedirs(app_cache, exist_ok=True)
         
-        ext = self._infer_extension(url)
-        filename = os.path.join(app_cache, f"current_wallpaper.{ext}")
+        ext = self._infer_extension(img_url)
+        save_path = os.path.join(app_cache, f"current_wallpaper.{ext}")
         
-        response = self._client.get(url)
+        response = self._client.get(img_url)
         if response.status_code != 200:
-            raise ImageDownloadError(f"Failed to download image ({response.status_code}) from url {url}")
+            raise ImageDownloadError(f"Failed to download image ({response.status_code}) from url {img_url}")
             
-        with open(filename, "wb") as f:
+        with open(save_path, "wb") as f:
             f.write(response.content)
             
-        print(f"Wallpaper downloaded successfully to {filename}")
+        print(f"Wallpaper downloaded successfully to {save_path}")
         
-        return filename
+        return save_path
         
     def _infer_extension(self, url: str) -> str:
         path = urlparse(url).path.lower()
