@@ -7,6 +7,7 @@ import os
 @dataclass
 class WallpaperMetadata:
     img_url: str
+    day: int
     artist: Optional[str] = None
     source: Optional[str] = None
     post_id: Optional[str] = None

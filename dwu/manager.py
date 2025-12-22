@@ -29,6 +29,7 @@ class WallpaperManager:
         meta = self._scraper.get_metadata(post_index)
         filename = self._download_image(meta)
         self._set_wallpaper(filename)
+        self._send_notification(meta)
 
     def _download_image(self, metadata: WallpaperMetadata) -> str:
         ext = self._infer_extension(metadata.img_url)
@@ -76,3 +77,13 @@ class WallpaperManager:
             raise WallpaperSetError("awww command not found. please install awww-git from the AUR.")
         except subprocess.CalledProcessError as e:
             raise WallpaperSetError(f"awww failed: {e.stderr}")
+            
+    def _send_notification(self, metadata: WallpaperMetadata):
+        subprocess.run(
+            [
+                "notify-send", f"Day {metadata.day}", f"Artist: {metadata.artist}"
+            ],
+            check=True,
+            capture_output=True,
+            text=True
+        )

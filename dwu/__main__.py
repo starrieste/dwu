@@ -1,4 +1,5 @@
 import click
+
 from .splash import splash
 from .manager import WallpaperManager
 from .metadata import WallpaperMetadata
@@ -22,7 +23,7 @@ def main(daily: bool, credits: bool):
             click.echo("No wallpaper metadata found")
             return
         
-        click.echo("Credits:")
+        click.echo(f"Day {metadata.day} Credits:")
         if metadata.artist:
             click.echo(f"    Artist: {metadata.artist}")
         if metadata.artist:
