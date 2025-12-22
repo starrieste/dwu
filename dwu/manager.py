@@ -81,7 +81,9 @@ class WallpaperManager:
     def _send_notification(self, metadata: WallpaperMetadata):
         subprocess.run(
             [
-                "notify-send", f"Day {metadata.day}", f"Artist: {metadata.artist}"
+                "notify-send", 
+                f"Day {metadata.day}",
+                f"Artist: {metadata.artist}"
             ],
             check=True,
             capture_output=True,
