@@ -8,6 +8,10 @@ from selectolax.parser import HTMLParser
 
 import subprocess
 
+import json
+from dataclasses import dataclass, asdict
+from typing import Optional
+
 class WallpaperError(Exception):
     pass
 
@@ -16,6 +20,14 @@ class ImageDownloadError(WallpaperError):
 
 class WallpaperSetError(WallpaperError):
     pass
+    
+    
+@dataclass
+class WallpaperMetadata:
+    img_url: str
+    artist: Optional[str] = None
+    source: Optional[str] = None
+    post_id: Optional[str] = None
 
 class WallpaperManager:
     def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:
@@ -31,39 +43,63 @@ class WallpaperManager:
         )
 
     def update_wallpaper(self, post_index: int = 0) -> None:
-        img_url = self._fetch_image_url(post_index)
-        filename = self._download_image(img_url)
+        meta = self._get_metadata(post_index)
+        filename = self._download_image(meta)
         self._set_wallpaper(filename)
 
-    def _fetch_image_url(self, post_index: int = 0) -> str:
+    def _get_metadata(self, post_index: int = 0) -> WallpaperMetadata:
         response = self._client.get(self._root_url)
         tree = HTMLParser(response.text)
 
         posts = tree.css(".post")
         if not posts:
-            raise ImageDownloadError("No posts found on page")
-            
-        try:
-            post = posts[post_index]
-        except IndexError:
+            raise ImageDownloadError("Could not find post")
+        if not posts[post_index]:
             raise ImageDownloadError(f"No post at index {post_index}")
             
-        return self._get_img_src(post)
-
-    def _get_img_src(self, post) -> str:
-        img_url = post.css_first("img").attributes.get("data-orig-file")
+        post = posts[post_index]
+            
+        img = post.css_first("img")
+        if not img:
+            raise ImageDownloadError("No image in post")
+            
+        img_url = img.attributes.get("data-orig-file")
         if not img_url:
             raise ImageDownloadError("Image source could not be resolved")
-
-        return img_url
+            
+        artist = None
+        source = None
         
-    def _download_image(self, img_url: str) -> str:
+        paragraphs = post.css('p')
+        for p in paragraphs:
+            if "credit" in p.text().lower():
+                link = p.css_first("a")
+                if not link:
+                    print("Could not find link to artist for this wallpaper")
+                    break
+                artist = link.text().strip()
+                source = link.attributes.get("href")
+                break
+                
+        post_id = post.attributes.get('id')
+            
+        return WallpaperMetadata(
+            img_url=img_url,
+            artist=artist,
+            source=source,
+            post_id=post_id
+        )
+
+    def _download_image(self, metadata: WallpaperMetadata) -> str:
         cache_dir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
         app_cache = os.path.join(cache_dir, 'dwu')
         os.makedirs(app_cache, exist_ok=True)
         
+        img_url = metadata.img_url
+        
         ext = self._infer_extension(img_url)
         save_path = os.path.join(app_cache, f"current_wallpaper.{ext}")
+        metadata_path = os.path.join(app_cache, "current_wallpaper.json")
         
         response = self._client.get(img_url)
         if response.status_code != 200:
@@ -71,6 +107,9 @@ class WallpaperManager:
             
         with open(save_path, "wb") as f:
             f.write(response.content)
+        
+        with open(metadata_path, "w") as f:
+            json.dump(asdict(metadata), f, indent=4, ensure_ascii=False)
             
         print(f"Wallpaper downloaded successfully to {save_path}")
         
