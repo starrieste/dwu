@@ -81,8 +81,12 @@ class WallpaperManager:
         return link
 
     def _download_image(self, url: str) -> str:
+        cache_dir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
+        app_cache = os.path.join(cache_dir, 'dwu')
+        os.makedirs(app_cache, exist_ok=True)
+        
         ext = self._infer_extension(url)
-        filename = f"current_wallpaper.{ext}"
+        filename = os.path.join(app_cache, f"current_wallpaper.{ext}")
         
         response = self._client.get(url)
         if response.status_code != 200:
@@ -90,6 +94,8 @@ class WallpaperManager:
             
         with open(filename, "wb") as f:
             f.write(response.content)
+            
+        print(f"Wallpaper downloaded successfully to {filename}")
         
         return filename
         
@@ -118,7 +124,6 @@ class WallpaperManager:
                 capture_output=True,
                 text=True
             )
-            print(f"Wallpaper set successfully: {abs_path}")
         except FileNotFoundError:
             raise WallpaperSetError("awww command not found. please install awww.")
         except subprocess.CalledProcessError as e:
