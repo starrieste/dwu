@@ -3,6 +3,7 @@ import os
 from urllib.parse import urlparse
 
 import httpx
+
 from selectolax.parser import HTMLParser
 
 import subprocess
@@ -37,8 +38,8 @@ class WallpaperManager:
     def _fetch_image_url(self, post_index: int = 0) -> str:
         response = self._client.get(self._root_url)
         tree = HTMLParser(response.text)
+
         posts = tree.css(".post")
-        
         if not posts:
             raise ImageDownloadError("No posts found on page")
             
@@ -47,39 +48,15 @@ class WallpaperManager:
         except IndexError:
             raise ImageDownloadError(f"No post at index {post_index}")
             
-        link = self._extract_post_link(post)
-        return self._resolve_image_url(link)
+        return self._get_img_src(post)
 
-    def _extract_post_link(self, post) -> str:
-        anchor = post.css_first("a")
-        if not anchor:
-            raise ImageDownloadError("Post contains no links")
-            
-        href = anchor.attributes.get("href")
-        if not href:
-            raise ImageDownloadError("Link has no href")
-            
-        return href
+    def _get_img_src(self, post) -> str:
+        img_src = post.css_first("img").attributes.get("data-orig-file")
+        if not img_src:
+            raise ImageDownloadError("Image source could not be resolved")
+
+        return img_src
         
-    def _resolve_image_url(self, link:str) -> str:
-        response = self._client.get(link)
-        tree = HTMLParser(response.text)
-        
-        if link.startswith("https://imgur.com"):
-            img = tree.css_first(".image-placeholder")
-            if not img:
-                raise ImageDownloadError("Imgur image not found")
-            return img.attributes["src"]
-            
-        if link.startswith("https://drive.google.com"):
-            try:
-                file_id = link.split("/")[5]
-            except IndexError:
-                raise ImageDownloadError("Invalid Google Drive Link")
-            return f"https://drive.google.com/uc?id={file_id}"
-
-        return link
-
     def _download_image(self, url: str) -> str:
         cache_dir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
         app_cache = os.path.join(cache_dir, 'dwu')
