@@ -3,4 +3,4 @@ Description=DWU wallpaper updater
 
 [Service]
 Type=oneshot
-ExecStart=/usr/bin/dwu --daily
+ExecStart=/usr/bin/dwu --today
