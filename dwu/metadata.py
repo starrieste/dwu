@@ -8,13 +8,13 @@ import os
 class WallpaperMetadata:
     img_url: str
     day: int
+    add_watermark: bool =  True
     artist: Optional[str] = None
     source: Optional[str] = None
     post_id: Optional[str] = None
     
     @classmethod
     def load_current(cls) -> Optional[WallpaperMetadata]:
-        """Load metadata for current wallpaper"""
         cache_dir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
         metadata_path = os.path.join(cache_dir, 'dwu', 'current_wallpaper.json')
         
@@ -27,6 +27,5 @@ class WallpaperMetadata:
         return cls(**data)
     
     def save(self, path: str) -> None:
-        """Save metadata to JSON file"""
         with open(path, "w", encoding="utf-8") as f:
             json.dump(asdict(self), f, indent=2, ensure_ascii=False)

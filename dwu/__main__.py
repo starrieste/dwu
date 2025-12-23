@@ -12,9 +12,11 @@ def print_version(ctx, param, value):
 
 @click.command()
 @click.option('--version', is_flag=True, expose_value=False, callback=print_version, is_eager=True, help="Output current version")
-@click.option('--daily', is_flag=True, help="Set today\'s Wallpaper")
 @click.option('--credits', is_flag=True, help="Display the artist and source of the current wallpaper")
-def main(daily: bool, credits: bool):
+@click.option('--today', is_flag=True, help="Set today\'s Wallpaper")
+@click.option('--back', type=click.INT, help="Set to wallpaper from an amount of days back")
+
+def main(today: bool, credits: bool, back: int):
     show_splash: bool = True
     
     if credits:
@@ -28,11 +30,22 @@ def main(daily: bool, credits: bool):
             click.echo(f"    Artist: {metadata.artist}")
         if metadata.artist:
             click.echo(f"    Source: {metadata.source}")
+            
+        wallman = WallpaperManager()
+        if metadata.add_watermark:
+            wallman.unwatermark(metadata)
+            
         show_splash = False
     
-    if daily:
+    if today:
         wallman = WallpaperManager()
         wallman.update_wallpaper()
+        click.echo("Wallpaper updated!")
+        show_splash = False
+        
+    if back is not None:
+        wallman = WallpaperManager()
+        wallman.update_wallpaper(back)
         click.echo("Wallpaper updated!")
         show_splash = False
 

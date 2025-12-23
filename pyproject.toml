@@ -16,7 +16,8 @@ authors = [
 dependencies = [
     "click",
     "httpx",
-    "selectolax"
+    "selectolax",
+    "pillow"
 ]
 
 [project.scripts]

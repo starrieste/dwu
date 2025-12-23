@@ -59,11 +59,14 @@ class WallpaperScraper:
         dayline = post.css_first('p')
         if dayline: 
             day = int("".join(c for c in dayline.text() if c.isdigit()))
+        
             
-        return WallpaperMetadata(
+        metadata =  WallpaperMetadata(
             img_url=img_url,
             day=day,
             artist=artist,
             source=source,
             post_id=post_id
         )
+        
+        return metadata

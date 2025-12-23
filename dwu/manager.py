@@ -7,6 +7,8 @@ import subprocess
 from .scraper import WallpaperScraper
 from .metadata import WallpaperMetadata
 
+from PIL import Image, ImageDraw, ImageFont
+
 class WallpaperSetError(Exception):
     pass
 
@@ -27,14 +29,80 @@ class WallpaperManager:
 
     def update_wallpaper(self, post_index: int = 0) -> None:
         meta = self._scraper.get_metadata(post_index)
+        metadata_path = os.path.join(self._cache_dir, "current_wallpaper.json")
+        meta.save(metadata_path)
+        
         filename = self._download_image(meta)
         self._set_wallpaper(filename)
         self._send_notification(meta)
+        
+    def _watermark_image(self, img_path: str, metadata: WallpaperMetadata):
+        img = Image.open(img_path)
+        w, h = img.size
+        dw, dh = self._get_display_resolution()
+        
+        target_ratio = dw/dh
+        difx, dify = 0, 0
+        if (w / h) > target_ratio: # image is too wide
+            nw = int(target_ratio * h)
+            difx = (nw - w)//2
+        else: # image is too tall
+            nh = int(w / target_ratio)
+            dify = (nh - h)//2
+            
+            
+        font_size = int(h * 0.02)
+        
+        try:
+            font = ImageFont.truetype("/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc", font_size, index=0)
+        except:
+            try:
+                font = ImageFont.truetype("/usr/share/fonts/TTF/DejaVuSans.ttf", font_size)
+            except:
+                font = ImageFont.load_default()
+        
+        draw = ImageDraw.Draw(img)
+        
+        text = f"{metadata.artist}" if metadata.artist else ""
+        
+        bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+        
+        padding = int(min(w, h) * 0.015) 
+        
+        x = w - text_width - padding + difx
+        y = h - text_height - padding + dify
+        
+        draw.text((x, y), text, fill="white", font=font)
+        
+        img.save(img_path)   
+        
+    def _get_display_resolution(self) -> tuple:
+        try:
+            result = subprocess.run(
+                'wlr-randr | grep current',
+                shell=True,
+                capture_output=True,
+                text=True,
+                check=True
+            )
+            
+            res = result.stdout.strip().split(" ")[0]
+            res = tuple(map(int, res.split('x')))
+            
+            return res
+        except:
+            return (1920, 1080)
+                
+    def unwatermark(self, metadata: WallpaperMetadata):
+        metadata.add_watermark = False
+        filename = self._download_image(metadata)
+        self._set_wallpaper(filename)
 
     def _download_image(self, metadata: WallpaperMetadata) -> str:
         ext = self._infer_extension(metadata.img_url)
         save_path = os.path.join(self._cache_dir, f"current_wallpaper.{ext}")
-        metadata_path = os.path.join(self._cache_dir, "current_wallpaper.json")
         
         response = self._client.get(metadata.img_url)
         if response.status_code != 200:
@@ -43,9 +111,9 @@ class WallpaperManager:
         with open(save_path, "wb") as f:
             f.write(response.content)
         
-        metadata.save(metadata_path)
+        if metadata.add_watermark:
+            self._watermark_image(save_path, metadata)
         
-        print(f"Wallpaper downloaded successfully to {save_path}")
         return save_path
         
     def _infer_extension(self, url: str) -> str:
