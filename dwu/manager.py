@@ -51,7 +51,7 @@ class WallpaperManager:
             dify = (nh - h)//2
             
             
-        font_size = int(h * 0.02)
+        font_size = int(min(w, h) * 0.02)
         
         try:
             font = ImageFont.truetype("/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc", font_size, index=0)
@@ -74,7 +74,14 @@ class WallpaperManager:
         x = w - text_width - padding + difx
         y = h - text_height - padding + dify
         
-        draw.text((x, y), text, fill="white", font=font)
+        draw.text(
+            (x, y),
+            text,
+            fill="white",
+            font=font,
+            stroke_width=1,
+            stroke_fill="black",
+        )
         
         img.save(img_path)   
         
