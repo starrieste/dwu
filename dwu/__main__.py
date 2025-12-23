@@ -7,7 +7,7 @@ from .metadata import WallpaperMetadata
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo("DWU (Daily Wallpaper Updater) 0.1.3")
+    click.echo("DWU (Daily Wallpaper Updater) 0.2.1")
     ctx.exit()
 
 @click.command()
