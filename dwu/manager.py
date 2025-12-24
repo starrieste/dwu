@@ -189,6 +189,8 @@ class WallpaperManager:
             try:
                 subprocess.run(cmd, check=True, capture_output=True, text=True)
                 self._send_notification(meta)
+                meta.successfully_set = True
+                meta.save(self._metadata_path)
                 return True
             except FileNotFoundError:
                 continue
