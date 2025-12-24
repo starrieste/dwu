@@ -21,7 +21,7 @@ pipx install dwu
 ### Wallpaper Setting Thingy
 
 You do need to install a capable wallpaper setter.  
-Right now, the only supported ones are awww, feh (hopefully), and nitrogen (probably)  
+Right now, the only supported ones are awww, swww, feh (hopefully), and nitrogen (probably)  
 I considered keeping awww-git as a mandatory dependency on the AUR package, but realized for anyone using X11 it would take ages to compile for no reason.  
 So please install it yourself!  
 
