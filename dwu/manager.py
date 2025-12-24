@@ -27,14 +27,21 @@ class WallpaperManager:
         os.makedirs(app_cache, exist_ok=True)
         return app_cache
 
-    def update_wallpaper(self, post_index: int = 0) -> None:
+    def update_wallpaper(self, post_index: int = 0) -> bool:
         meta = self._scraper.get_metadata(post_index)
         metadata_path = os.path.join(self._cache_dir, "current_wallpaper.json")
+        if os.path.exists(metadata_path):
+            old_meta = WallpaperMetadata.load_current()
+            if old_meta is not None and meta.img_url == old_meta.img_url:
+                print("Already using this wallpaper")
+                return False
+
         meta.save(metadata_path)
         
         filename = self._download_image(meta)
         self._set_wallpaper(filename)
         self._send_notification(meta)
+        return True
         
     def _watermark_image(self, img_path: str, metadata: WallpaperMetadata):
         img = Image.open(img_path)

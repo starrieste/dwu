@@ -39,14 +39,20 @@ def main(today: bool, credits: bool, back: int):
     
     if today:
         wallman = WallpaperManager()
-        wallman.update_wallpaper()
-        click.echo("Wallpaper updated!")
+        status = wallman.update_wallpaper()
+        if status:
+            click.echo("Wallpaper updated!")
+        else:
+            click.echo("Wallpaper unchanged")
         show_splash = False
         
-    if back is not None:
+    elif back is not None:
         wallman = WallpaperManager()
-        wallman.update_wallpaper(back)
-        click.echo("Wallpaper updated!")
+        status = wallman.update_wallpaper(back)
+        if status:
+            click.echo("Wallpaper updated!")
+        else:
+            click.echo("Wallpaper unchanged")
         show_splash = False
 
     if show_splash:
