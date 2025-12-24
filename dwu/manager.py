@@ -180,7 +180,7 @@ class WallpaperManager:
             (["awww", "img", abs_path, "--transition-type", "any", 
                 "--transition-step", "63", "--transition-duration", "2", 
                 "--transition-fps", "60"], "awww"),
-        ] if ds == 'Wayland' else [ # else assume X11
+        ] if ds == 'wayland' else [ # else assume X11
             (["feh", "--bg-fill", abs_path], "feh"),
             (["nitrogen", "--set-scaled", abs_path], "nitrogen"), 
         ]
@@ -196,16 +196,16 @@ class WallpaperManager:
                 continue
         
         click.echo("No supported wallpaper tool found. Please install one.")
-        click.echo(f"I think you are using {ds}")
-        click.echo(f"Currently supported wallpaper things for {ds} include " + ("awww" if ds == 'Wayland' else "feh, nitrogen"))
+        click.echo(f"I think you are using {ds.capitalize()}")
+        click.echo(f"Currently supported wallpaper things for {ds.capitalize()} include " + ("awww" if ds == 'wayland' else "feh, nitrogen"))
         
         return False
         
     def _detect_display_server(self) -> str:
         if os.environ.get('WAYLAND_DISPLAY'):
-            return 'Wayland'
+            return 'wayland'
         elif os.environ.get('DISPLAY'):
-            return 'X11'
+            return 'x11'
         return 'unknown'
             
     def _send_notification(self, metadata: WallpaperMetadata):
