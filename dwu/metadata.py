@@ -12,6 +12,7 @@ class WallpaperMetadata:
     artist: Optional[str] = None
     source: Optional[str] = None
     post_id: Optional[str] = None
+    successfully_set: bool = False
     
     @classmethod
     def load_current(cls) -> Optional[WallpaperMetadata]:

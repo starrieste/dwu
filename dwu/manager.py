@@ -35,15 +35,17 @@ class WallpaperManager:
         if os.path.exists(self._metadata_path):
             old_meta = WallpaperMetadata.load_current()
             if old_meta is not None and meta.img_url == old_meta.img_url:
-                click.echo("Already using this wallpaper")
-                return False
+                image_path = self._get_image_path(meta)
+                if os.path.exists(image_path):
+                    if old_meta.successfully_set:
+                        click.echo("Already using this wallpaper")
+                        return False
+                else:
+                    return self._set_wallpaper(image_path, meta)
 
         meta.save(self._metadata_path)
-        
         filename = self._download_image(meta)
-        self._set_wallpaper(filename)
-        self._send_notification(meta)
-        return True
+        return self._set_wallpaper(filename, meta)
         
     def _watermark_image(self, img_path: str, metadata: WallpaperMetadata):
         img = Image.open(img_path)
@@ -118,9 +120,15 @@ class WallpaperManager:
         metadata.add_watermark = False
         metadata.save(self._metadata_path)
         filename = self._download_image(metadata)
-        self._set_wallpaper(filename)
+        self._set_wallpaper(filename, metadata)
+        
+    def _get_image_path(self, metadata: WallpaperMetadata) -> str:
+        """Get the path where the image should be saved, based on metadata."""
+        ext = self._infer_extension(metadata.img_url)
+        return os.path.join(self._cache_dir, f"current_wallpaper.{ext}")
 
     def _download_image(self, metadata: WallpaperMetadata) -> str:
+        """Download the image using img_url from given metadata"""
         ext = self._infer_extension(metadata.img_url)
         save_path = os.path.join(self._cache_dir, f"current_wallpaper.{ext}")
         
@@ -143,28 +151,44 @@ class WallpaperManager:
                 return ext
         return "png"
 
-    def _set_wallpaper(self, filename: str) -> None:
+    def _set_wallpaper(self, filename: str, meta: WallpaperMetadata) -> bool:
         if not os.path.isfile(filename):
             raise WallpaperSetError("Wallpaper file not found")
             
         abs_path = os.path.abspath(filename)
-        try:
-            subprocess.run(
-                [
-                    "awww", "img", abs_path,
-                    "--transition-type", "any",
-                    "--transition-step", "63",
-                    "--transition-duration", "2",
-                    "--transition-fps", "60"
-                ],
-                check=True,
-                capture_output=True,
-                text=True
-            )
-        except FileNotFoundError:
-            raise WallpaperSetError("awww command not found. please install awww-git from the AUR.")
-        except subprocess.CalledProcessError as e:
-            raise WallpaperSetError(f"awww failed: {e.stderr}")
+        ds = self._detect_display_server()
+        backends = [
+            (["awww", "img", abs_path, "--transition-type", "any", 
+                "--transition-step", "63", "--transition-duration", "2", 
+                "--transition-fps", "60"], "awww"),
+        ] if ds == 'wayland' else [ # else assume X11
+            (["feh", "--bg-fill", abs_path], "feh"),
+            (["nitrogen", "--set-scaled", abs_path], "nitrogen"), 
+        ]
+            
+        for cmd, name in backends:
+            try:
+                subprocess.run(cmd, check=True, capture_output=True, text=True)
+                self._send_notification(meta)
+                return True
+            except FileNotFoundError:
+                continue
+            except subprocess.CalledProcessError:
+                continue
+        
+        click.echo("No supported wallpaper tool found. Please install one.")
+        click.echo(f"I think you are using {ds}")
+        click.echo(f"Currently supported for {ds} is" + ("awww" if ds == 'wayland' else "feh, nitrogen"))
+        click.echo("Want to use a different one? Make a PR to https://github.com/starrieste/dwu")
+        
+        return False
+        
+    def _detect_display_server(self) -> str:
+        if os.environ.get('WAYLAND_DISPLAY'):
+            return 'wayland'
+        elif os.environ.get('DISPLAY'):
+            return 'x11'
+        return 'unknown'
             
     def _send_notification(self, metadata: WallpaperMetadata):
         subprocess.run(
