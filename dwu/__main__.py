@@ -31,9 +31,10 @@ def main(today: bool, credits: bool, back: int):
         if metadata.artist:
             click.echo(f"    Source: {metadata.source}")
             
-        wallman = WallpaperManager()
         if metadata.add_watermark:
+            wallman = WallpaperManager()
             wallman.unwatermark(metadata)
+            click.echo("\nWatermark removed! Please show the artist some love!")
             
         show_splash = False
     

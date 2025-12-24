@@ -22,6 +22,7 @@ class WallpaperManager:
         self._scraper = WallpaperScraper()
         self._client = httpx.Client(timeout=30.0)
         self._cache_dir = self._get_cache_dir()
+        self._metadata_path = os.path.join(self._cache_dir, "current_wallpaper.json")
     
     def _get_cache_dir(self) -> str:
         cache_dir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
@@ -31,14 +32,13 @@ class WallpaperManager:
 
     def update_wallpaper(self, post_index: int = 0) -> int:
         meta = self._scraper.get_metadata(post_index)
-        metadata_path = os.path.join(self._cache_dir, "current_wallpaper.json")
-        if os.path.exists(metadata_path):
+        if os.path.exists(self._metadata_path):
             old_meta = WallpaperMetadata.load_current()
             if old_meta is not None and meta.img_url == old_meta.img_url:
                 click.echo("Already using this wallpaper")
                 return False
 
-        meta.save(metadata_path)
+        meta.save(self._metadata_path)
         
         filename = self._download_image(meta)
         self._set_wallpaper(filename)
@@ -113,6 +113,7 @@ class WallpaperManager:
                 
     def unwatermark(self, metadata: WallpaperMetadata):
         metadata.add_watermark = False
+        metadata.save(self._metadata_path)
         filename = self._download_image(metadata)
         self._set_wallpaper(filename)
 
