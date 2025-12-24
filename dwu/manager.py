@@ -64,11 +64,13 @@ class WallpaperManager:
         
         try:
             font = ImageFont.truetype("/usr/share/fonts/noto-cjk/NotoSansCJK-Regular.ttc", font_size, index=0)
-        except:
+        except Exception as e:
+            click.echo(e)
             try:
                 font = ImageFont.truetype("/usr/share/fonts/TTF/DejaVuSans.ttf", font_size)
-            except:
+            except Exception as ee:
                 font = ImageFont.load_default()
+                click.echo(ee)
         
         draw = ImageDraw.Draw(img)
         
@@ -108,7 +110,8 @@ class WallpaperManager:
             res = tuple(map(int, res.split('x')))
             
             return res
-        except:
+        except Exception as e:
+            click.echo(e)
             return (1920, 1080)
                 
     def unwatermark(self, metadata: WallpaperMetadata):
