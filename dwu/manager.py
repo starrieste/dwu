@@ -99,21 +99,40 @@ class WallpaperManager:
         img.save(img_path)   
         
     def _get_display_resolution(self) -> tuple:
+        ds = self._detect_display_server()
+        
         try:
-            result = subprocess.run(
-                'wlr-randr | grep current',
-                shell=True,
-                capture_output=True,
-                text=True,
-                check=True
-            )
+            if ds == 'wayland':
+                result = subprocess.run(
+                    'wlr-randr | grep current',
+                    shell=True,
+                    capture_output=True,
+                    text=True,
+                    check=True
+                )
+                res = result.stdout.strip().split(" ")[0]
+                
+            elif ds == 'x11':
+                result = subprocess.run(
+                    ['xrandr'],
+                    capture_output=True,
+                    text=True,
+                    check=True
+                )
+                
+                for line in result.stdout.split('\n'):
+                    if '*' in line:
+                        res = line.split()[0]
+                        break
+                else:
+                    return (1920, 1080)
+            else:
+                return (1920, 1080)
             
-            res = result.stdout.strip().split(" ")[0]
-            res = tuple(map(int, res.split('x')))
+            return tuple(map(int, res.split('x')))
             
-            return res
         except Exception as e:
-            click.echo(e)
+            click.echo(f"Could not detect resolution: {e}")
             return (1920, 1080)
                 
     def unwatermark(self, metadata: WallpaperMetadata):
