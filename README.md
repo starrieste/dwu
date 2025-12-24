@@ -47,7 +47,7 @@ To remove it (for the current wallpaper instance only), run the following comman
 dwu --credits
 ```
 
-For automatic hourly updates, use systemdif you're on Arch. If not, you might need to figure something out yourself.
+For automatic hourly updates, use systemd if you're on Arch. If not, you might need to figure something out yourself.
 
 ```bash
 systemctl --user enable --now dwu.timer
