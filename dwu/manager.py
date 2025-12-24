@@ -1,9 +1,11 @@
 from __future__ import annotations
+
 import os
-from urllib.parse import urlparse
 import httpx
 import subprocess
+import click
 
+from urllib.parse import urlparse
 from .scraper import WallpaperScraper
 from .metadata import WallpaperMetadata
 
@@ -27,13 +29,13 @@ class WallpaperManager:
         os.makedirs(app_cache, exist_ok=True)
         return app_cache
 
-    def update_wallpaper(self, post_index: int = 0) -> bool:
+    def update_wallpaper(self, post_index: int = 0) -> int:
         meta = self._scraper.get_metadata(post_index)
         metadata_path = os.path.join(self._cache_dir, "current_wallpaper.json")
         if os.path.exists(metadata_path):
             old_meta = WallpaperMetadata.load_current()
             if old_meta is not None and meta.img_url == old_meta.img_url:
-                print("Already using this wallpaper")
+                click.echo("Already using this wallpaper")
                 return False
 
         meta.save(metadata_path)

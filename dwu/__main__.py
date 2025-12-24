@@ -4,15 +4,9 @@ from .splash import splash
 from .manager import WallpaperManager
 from .metadata import WallpaperMetadata
 
-def print_version(ctx, param, value):
-    if not value or ctx.resilient_parsing:
-        return
-    click.echo("DWU (Daily Wallpaper Updater) 0.2.2")
-    ctx.exit()
-
 @click.command()
-@click.option('--version', is_flag=True, expose_value=False, callback=print_version, is_eager=True, help="Output current version")
-@click.option('--credits', is_flag=True, help="Display the artist and source of the current wallpaper")
+@click.version_option(package_name="dwu")
+@click.option('--credits', is_flag=True, help="Display the artist and source of the current wallpaper. Removes watermark if run")
 @click.option('--today', is_flag=True, help="Set today\'s Wallpaper")
 @click.option('--back', type=click.INT, help="Set to wallpaper from an amount of days back")
 
