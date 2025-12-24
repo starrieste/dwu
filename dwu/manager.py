@@ -188,7 +188,6 @@ class WallpaperManager:
         for cmd, name in backends:
             try:
                 subprocess.run(cmd, check=True, capture_output=True, text=True)
-                self._send_notification(meta)
                 meta.successfully_set = True
                 meta.save(self._metadata_path)
                 return True
@@ -209,15 +208,3 @@ class WallpaperManager:
         elif os.environ.get('DISPLAY'):
             return 'x11'
         return 'unknown'
-            
-    def _send_notification(self, metadata: WallpaperMetadata):
-        subprocess.run(
-            [
-                "notify-send", 
-                f"Day {metadata.day}",
-                f"Artist: {metadata.artist}"
-            ],
-            check=True,
-            capture_output=True,
-            text=True
-        )
