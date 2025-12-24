@@ -16,8 +16,6 @@ yay -S dwu
 
 ```bash
 pipx install dwu
-# OR
-pip install DWU
 ```
 
 ## Usage
