@@ -52,3 +52,10 @@ For automatic hourly updates, use systemdif you're on Arch. If not, you might ne
 ```bash
 systemctl --user enable --now dwu.timer
 ```
+
+## Contribution
+
+You can make issues and PRs and stuff idrk we'll see
+
+I am an ameteur developer and I am very dumb dumb so if you have any advice,
+feel free to yell at me, thanks qwq
