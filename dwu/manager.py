@@ -40,8 +40,8 @@ class WallpaperManager:
                     if old_meta.successfully_set:
                         click.echo("Already using this wallpaper")
                         return False
-                else:
-                    return self._set_wallpaper(image_path, meta)
+                    else:
+                        return self._set_wallpaper(image_path, meta)
 
         meta.save(self._metadata_path)
         filename = self._download_image(meta)
