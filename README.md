@@ -58,7 +58,4 @@ systemctl --user enable --now dwu.timer
 
 ## Contribution
 
-You can make issues and PRs and stuff idrk we'll see
-
-I am an ameteur developer and I am very dumb dumb so if you have any advice,
-feel free to yell at me, thanks qwq
+You can make issues and PRs, that would be awesome
