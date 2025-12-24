@@ -18,7 +18,7 @@ yay -S dwu
 Set to today's wallpaper
 
 ```bash
-dwu --daily
+dwu --today
 ```
 
 For automatic hourly updates, use systemctl
