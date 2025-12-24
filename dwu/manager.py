@@ -180,6 +180,9 @@ class WallpaperManager:
             (["awww", "img", abs_path, "--transition-type", "any", 
                 "--transition-step", "63", "--transition-duration", "2", 
                 "--transition-fps", "60"], "awww"),
+            (["swww", "img", abs_path, "--transition-type", "any", 
+                "--transition-step", "63", "--transition-duration", "2", 
+                "--transition-fps", "60"], "awww"),
         ] if ds == 'wayland' else [ # else assume X11
             (["feh", "--bg-fill", abs_path], "feh"),
             (["nitrogen", "--set-scaled", abs_path], "nitrogen"), 
