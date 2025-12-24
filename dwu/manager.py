@@ -158,6 +158,8 @@ class WallpaperManager:
         with open(save_path, "wb") as f:
             f.write(response.content)
         
+        click.echo(f"Successfully downloaded wallpaper to {save_path}!")
+        
         if metadata.add_watermark:
             self._watermark_image(save_path, metadata)
         
