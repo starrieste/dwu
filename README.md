@@ -18,7 +18,7 @@ yay -S dwu
 pipx install dwu
 ```
 
-### Wallpaper Setting Thingy
+### Wallpaper Setting
 
 You do need to install a capable wallpaper setter.  
 Right now, the only supported ones are awww, swww, feh (hopefully), and nitrogen (probably)  
