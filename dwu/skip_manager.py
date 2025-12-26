@@ -3,7 +3,7 @@ import os
 import json
 import click
 
-from .utils import get_cache_dir
+from dwu.utils import get_cache_dir
 
 class SkipManager:
     def __init__(self):

@@ -5,7 +5,7 @@ from urllib.parse import urlparse
 
 import click
 
-from .wallresult import WallResult
+from dwu.wallresult import WallResult
 
 def get_cache_dir() -> str:
     cache_dir = os.environ.get(

@@ -4,12 +4,12 @@ import os
 import httpx
 import click
 
-from .scraper import WallpaperScraper
-from .metadata import WallpaperMetadata
-from .skip_manager import SkipManager
-from .wallresult import WallResult
-from .backends import get_backend, WallpaperBackend
-from .utils import get_cache_dir, infer_extension, detect_display_server, get_display_resolution
+from dwu.scraper import WallpaperScraper
+from dwu.metadata import WallpaperMetadata
+from dwu.skip_manager import SkipManager
+from dwu.wallresult import WallResult
+from dwu.backends import get_backend, WallpaperBackend
+from dwu.utils import get_cache_dir, infer_extension, detect_display_server, get_display_resolution
 
 from PIL import Image, ImageDraw, ImageFont
 

@@ -1,7 +1,7 @@
 import subprocess
 import os
 
-from .base import WallpaperBackend
+from dwu.backends.base import WallpaperBackend
 
 class NitrogenBackend(WallpaperBackend):
     name = "nitrogen"

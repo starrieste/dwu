@@ -1,6 +1,6 @@
 import re
 import subprocess
-from .base import WallpaperBackend
+from dwu.backends.base import WallpaperBackend
 
 class SwwwBackend(WallpaperBackend):
     name = "swww"

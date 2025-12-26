@@ -4,7 +4,7 @@ from typing import Optional
 import json
 import os
 
-from .utils import get_cache_dir
+from dwu.utils import get_cache_dir
 
 @dataclass
 class WallpaperMetadata:

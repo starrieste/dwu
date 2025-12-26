@@ -2,12 +2,12 @@ import random
 import click
 import sys
 
-from .splash import splash
-from .wallpaper_manager import WallpaperManager
-from .metadata import WallpaperMetadata
-from .skip_manager import SkipManager
-from .scraper import WallpaperScraper
-from .utils import print_wall_feedback
+from dwu.splash import splash
+from dwu.wallpaper_manager import WallpaperManager
+from dwu.metadata import WallpaperMetadata
+from dwu.skip_manager import SkipManager
+from dwu.scraper import WallpaperScraper
+from dwu.utils import print_wall_feedback
 
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:

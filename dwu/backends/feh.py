@@ -1,6 +1,6 @@
 import subprocess
 import shutil
-from .base import WallpaperBackend
+from dwu.backends.base import WallpaperBackend
 
 class FehBackend(WallpaperBackend):
     name = "feh"

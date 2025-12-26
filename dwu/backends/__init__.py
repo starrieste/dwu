@@ -1,8 +1,8 @@
 from dwu.backends.nitrogen import NitrogenBackend
-from .awww import AwwwBackend
-from .feh import FehBackend
-from .swww import SwwwBackend
-from .base import WallpaperBackend
+from dwu.backends.awww import AwwwBackend
+from dwu.backends.feh import FehBackend
+from dwu.backends.swww import SwwwBackend
+from dwu.backends.base import WallpaperBackend
 
 WAYLAND_BACKENDS = [
     AwwwBackend(),

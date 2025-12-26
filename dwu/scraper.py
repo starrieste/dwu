@@ -2,7 +2,7 @@ from __future__ import annotations
 import httpx
 from selectolax.parser import HTMLParser
 
-from .metadata import WallpaperMetadata
+from dwu.metadata import WallpaperMetadata
 
 class ImageDownloadError(Exception):
     pass
