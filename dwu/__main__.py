@@ -49,7 +49,8 @@ def main(
     
     if status:
         try:
-            click.echo(wallman._backend.name)
+            if wallman._backend is not None:
+                click.echo(wallman._backend.name)
         except Exception as e:
             click.secho(f"Error: {e}", fg="red")
             sys.exit(1)
@@ -119,3 +120,10 @@ def main(
         
     else:
         click.echo(splash)
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception as e:
+        click.secho(f"Error: {e}", fg="red")
+        sys.exit(1)
