@@ -3,6 +3,8 @@ from dataclasses import dataclass, asdict
 from typing import Optional
 import json
 import os
+from urllib.parse import urlparse
+from pathlib import PurePosixPath
 
 from dwu.utils import get_cache_dir
 
@@ -35,6 +37,10 @@ class WallpaperMetadata:
         
         with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(asdict(self), f, indent=2, ensure_ascii=False)
+    
+    def get_img_name(self) -> str:
+        path = urlparse(self.img_url).path
+        return PurePosixPath(path).name
         
     def __str__(self) -> str:
             lines = [

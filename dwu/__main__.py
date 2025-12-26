@@ -1,7 +1,9 @@
+import os
 import random
 import click
 import sys
 
+from dwu.config_manager import Config
 from dwu.splash import splash
 from dwu.wallpaper_manager import WallpaperManager
 from dwu.metadata import WallpaperMetadata
@@ -22,25 +24,27 @@ def print_version(ctx, param, value):
 
 @click.option('--today', is_flag=True, help="Set today's wallpaper or the most recent unskipped wallpaper")
 @click.option('--back', type=click.INT, help="Set to wallpaper from an amount of days back. Ignores skips.")
+@click.option('--save', is_flag=True, help="Save the current wallpaper")
+@click.option('--save-dir', type=click.STRING, help="Set the save directory where you want to save the wallpapers.")
 
 @click.option('--skip', is_flag=True, help="Skip this wallpaper. DWU will try to find the most recent non-skipped wallpaper to set instead if you run --today.")
 @click.option('--unskip', type=click.INT, help="Unskip a wallpaper. 0 is today, then 1-9 is days before today.")
 @click.option('--unskip-all', is_flag=True, help="Unskip all wallpapers.")
 @click.option('--list-skipped', is_flag=True, help="List currently skipped wallpapers")
 
-@click.option('--show-metadata', is_flag=True, help="Display metadata of the current wallpaper")
 @click.option('--credits', is_flag=True, help="Display the artist and source of the current wallpaper. Removes watermark if run")
 
 def main(
     status: bool,
     today: bool,
-    credits: bool,
     back: int | None,
+    save: bool,
+    save_dir: str | None,
     skip: bool,
     unskip: int | None,
     unskip_all: bool,
     list_skipped: bool,
-    show_metadata: bool
+    credits: bool,
 ):
     try:
         wallman = WallpaperManager()
@@ -56,21 +60,23 @@ def main(
         
         elif back is not None:
             print_wall_feedback(wallman.update_back(back))
-            
-        elif credits:
+        
+        elif save:
+            save_folder = Config().get("save_dir") or os.path.join(os.path.expanduser("~"), "dwu_saved_wallpapers")
+            os.makedirs(save_folder, exist_ok=True)
             meta = WallpaperMetadata.load()
-            if not meta:
-                click.echo("No wallpaper metadata found")
-                return
+            if meta is None:
+                click.echo("No currently set wallpaper")
+            else:
+                save_path = os.path.join(save_folder, "dwu-" + str(meta.day) +"-" + str(meta.get_img_name()))
+                wallman.download_image(meta, save_path)
+                click.echo(f"Successfully saved wallpaper to {save_path}")
         
-            click.echo(f"Day {meta.day} Credits:")
-            if meta.artist:
-                click.echo(f"    Artist: {meta.artist}")
-            if meta.source:
-                click.echo(f"    Source: {meta.source}")
-        
-            if meta.add_watermark:
-                wallman.unwatermark(meta)
+        elif save_dir is not None:
+            path = os.path.expanduser(save_dir)
+            path = os.path.abspath(path)
+            Config().set("save_dir", path)
+            click.echo(f"Changed save directory to {path}")
                     
         elif skip:
             meta = WallpaperMetadata.load()
@@ -98,6 +104,21 @@ def main(
                 if skips.is_skipped(meta.img_url):
                     skipped.append(i)
             click.echo(skipped if len(skipped) > 0 else "No skipped wallpapers.")
+            
+        elif credits:
+            meta = WallpaperMetadata.load()
+            if not meta:
+                click.echo("No wallpaper metadata found")
+                return
+        
+            click.echo(f"Day {meta.day} Credits:")
+            if meta.artist:
+                click.echo(f"    Artist: {meta.artist}")
+            if meta.source:
+                click.echo(f"    Source: {meta.source}")
+        
+            if meta.add_watermark:
+                wallman.unwatermark(meta)
             
         else:
             click.secho(

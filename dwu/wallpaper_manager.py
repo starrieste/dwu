@@ -62,7 +62,11 @@ class WallpaperManager:
                 return WallResult.SET
         
         meta.save()
-        self._set_wallpaper(self._download_image(meta), meta)
+        filename = self.download_image(meta)
+        if meta.add_watermark:
+            self._watermark_image(filename, meta)
+        self._set_wallpaper(filename, meta)
+        
         return WallResult.SET
     
     def get_backend_name(self) -> str:
@@ -134,16 +138,16 @@ class WallpaperManager:
     def unwatermark(self, metadata: WallpaperMetadata) -> None:
         metadata.add_watermark = False
         metadata.save()
-        filename = self._download_image(metadata)
+        filename = self.download_image(metadata)
         self._set_wallpaper(filename, metadata)
         
     def _get_image_path(self, metadata: WallpaperMetadata) -> str:
         ext = infer_extension(metadata.img_url)
         return os.path.join(self._cache_dir, f"current_wallpaper.{ext}")
 
-    def _download_image(self, metadata: WallpaperMetadata) -> str:
+    def download_image(self, metadata: WallpaperMetadata, sp: str | None = None) -> str:
         ext = infer_extension(metadata.img_url)
-        save_path = os.path.join(self._cache_dir, f"current_wallpaper.{ext}")
+        save_path = sp or os.path.join(self._cache_dir, f"current_wallpaper.{ext}")
         
         response = self._client.get(metadata.img_url)
         if response.status_code != 200:
@@ -151,11 +155,6 @@ class WallpaperManager:
             
         with open(save_path, "wb") as f:
             f.write(response.content)
-        
-        click.echo(f"Successfully downloaded wallpaper to {save_path}!")
-        
-        if metadata.add_watermark:
-            self._watermark_image(save_path, metadata)
         
         return save_path
         
