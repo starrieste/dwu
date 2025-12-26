@@ -122,8 +122,4 @@ def main(
         click.echo(splash)
 
 if __name__ == '__main__':
-    try:
-        main()
-    except Exception as e:
-        click.secho(f"Error: {e}", fg="red")
-        sys.exit(1)
+    main()
