@@ -17,7 +17,7 @@
 ---
 <p align=center>A CLI tool that updates your desktop wallpaper each day to the latest anime wallpaper from <a href=https://wallpaper-a-day.com>wallpaper-a-day.com</a>  </p>
 
-<h1 align=center>Installation</h1>
+<h1>Installation</h1>
 
 ### Arch Linux (AUR)
 
@@ -38,7 +38,7 @@ Right now, the supported ones are `awww`, `swww`, `feh`, and `nitrogen`
 
 If you use swww, consider switching to awww, as swww is now archived. The author's explanation is [here](https://www.lgfae.com/posts/2025-10-29-RenamingSwww.html)
 
-<h1 align=center>Usage</h1>
+<h1>Usage</h1>
 
 Set to today's wallpaper
 
