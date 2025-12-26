@@ -54,7 +54,7 @@ def main(
         elif back is not None:
             print_wall_feedback(wallman.update_back(back))
             
-        elif c
+        elif credits:
             meta = WallpaperMetadata.load()
             if not meta:
                 click.echo("No wallpaper metadata found")
