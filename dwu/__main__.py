@@ -14,7 +14,7 @@ from dwu.utils import print_wall_feedback
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo("DWU (Daily Wallpaper Updater) 1.2.2")
+    click.echo("DWU (Daily Wallpaper Updater) 1.2.4")
     ctx.exit()
 
 @click.command()
