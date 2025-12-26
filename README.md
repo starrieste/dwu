@@ -1,8 +1,7 @@
 # DWU - Daily Wallpaper Updater
 
 DWU is a CLI tool that updates your desktop wallpaper each day to the latest anime wallpaper from [wallpaper-a-day.com](https://wallpaper-a-day.com)  
-The code for X11 is there, but I haven't tested it. If you run into an issue, please make an issue on this repository.  
-Or if you know how to fix it, a PR would be amazing.
+If you run into any issues, please feel free to make an issue on this repository.  
 
 ## Installation
 
@@ -18,13 +17,11 @@ yay -S dwu
 pipx install dwu
 ```
 
-### Wallpaper Setting Thingy
+### Wallpaper Setting
 
-You do need to install a capable wallpaper setter.  
-Right now, the only supported ones are awww, swww, feh (hopefully), and nitrogen (probably)  
-I considered keeping awww-git as a mandatory dependency on the AUR package, but realized for anyone using X11 it would take ages to compile for no reason.  
-So please install it yourself!  
-
+You do need to manually install a capable wallpaper setter.  
+Right now, the only supported ones are awww, swww, feh, and nitrogen  
+  
 If you want to use a different one, make an [issue](https://github.com/starrieste/dwu/issues) or [PR](https://github.com/starrieste/dwu/pulls)  
 If you use swww, consider switching to awww, as swww is now archived. The author's explanation is [here](https://www.lgfae.com/posts/2025-10-29-RenamingSwww.html)
 
