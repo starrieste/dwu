@@ -11,7 +11,7 @@ from .utils import print_wall_feedback
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo("DWU (Daily Wallpaper Updater) 1.0.1")
+    click.echo("DWU (Daily Wallpaper Updater) 1.1.0")
     ctx.exit()
 
 @click.command()
@@ -46,7 +46,9 @@ def main(
         
         if status:
             click.echo("Backend: " + wallman.get_backend_name())
-            # ADD MORE STATUS THINGS LATER I NEED SLEEP UGH
+            meta = WallpaperMetadata.load()
+            click.echo("Currently Set: " + ("yes" if wallman.currently_set(meta) else "no"))
+            click.echo(meta)
             
         elif today:
             print_wall_feedback(wallman.update_auto())
@@ -95,10 +97,6 @@ def main(
                 if skips.is_skipped(meta.img_url):
                     skipped.append(i)
             click.echo(skipped if len(skipped) > 0 else "No skipped wallpapers.")
-        
-        elif show_metadata:
-            meta = WallpaperMetadata.load()
-            click.echo(meta)
             
         else:
             click.echo(splash)
