@@ -43,6 +43,13 @@ Set to the wallpaper from a certain amount of days before today (integer should 
 dwu --back 2 # 2 days before today's wallpaper
 ```
 
+If you like a wallpaper, you can save it!
+
+```bash
+dwu --save-dir ~/Wallpapers
+dwu --save
+```
+
 For automatic hourly updates, use systemd if you're on Arch. If not, you might need to figure something out yourself.
 
 ```bash
