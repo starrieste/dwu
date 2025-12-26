@@ -12,7 +12,7 @@ class NitrogenBackend(WallpaperBackend):
             check=True
         )
 
-    def get_current(self) -> str | None:
+    def get_current_wallpaper(self) -> str | None:
         with open(
             os.path.expanduser("~/.config/nitrogen/bg-saved.cfg"),
             "r",

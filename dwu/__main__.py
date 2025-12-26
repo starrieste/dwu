@@ -41,10 +41,18 @@ def main(
     list_skipped: bool,
     show_metadata: bool
 ):
-    wallman = WallpaperManager()
+    try:
+        wallman = WallpaperManager()
+    except Exception as e:
+        click.secho(f"Error: {e}", fg="red")
+        sys.exit(1)
     
     if status:
-        pass
+        try:
+            click.echo(wallman._backend.name)
+        except Exception as e:
+            click.secho(f"Error: {e}", fg="red")
+            sys.exit(1)
         
     elif today:
         try:
@@ -57,6 +65,9 @@ def main(
         try:
             print_wall_feedback(wallman.update_back(back))
         except WallpaperSetError as e:
+            click.secho(f"Error: {e}", fg="red")
+            sys.exit(1)
+        except RuntimeError as e:
             click.secho(f"Error: {e}", fg="red")
             sys.exit(1)
         
@@ -108,6 +119,3 @@ def main(
         
     else:
         click.echo(splash)
-
-if __name__ == '__main__':
-    main()

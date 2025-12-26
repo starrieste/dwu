@@ -1,3 +1,4 @@
+from dwu.backends.nitrogen import NitrogenBackend
 from .awww import AwwwBackend
 from .feh import FehBackend
 from .swww import SwwwBackend
@@ -10,6 +11,7 @@ WAYLAND_BACKENDS = [
 
 X11_BACKENDS = [
     FehBackend(),
+    NitrogenBackend()
 ]
 
 def get_backend(display_server: str) -> WallpaperBackend | None:
