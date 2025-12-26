@@ -16,7 +16,9 @@ def print_version(ctx, param, value):
 @click.command()
 @click.option('--version', is_flag=True, expose_value=False, callback=print_version, is_eager=True, help="Output current version")
 
-@click.option('--today', is_flag=True, help="Set today\'s wallpaper or the most recent unskipped wallpaper")
+@click.option('--status', is_flag=True, help="Display info about the current status")
+
+@click.option('--today', is_flag=True, help="Set today's wallpaper or the most recent unskipped wallpaper")
 @click.option('--back', type=click.INT, help="Set to wallpaper from an amount of days back. Ignores skips.")
 
 @click.option('--skip', is_flag=True, help="Skip this wallpaper. DWU will try to find the most recent non-skipped wallpaper to set instead if you run --today.")
@@ -24,20 +26,26 @@ def print_version(ctx, param, value):
 @click.option('--unskip-all', is_flag=True, help="Unskip all wallpapers.")
 @click.option('--list-skipped', is_flag=True, help="List currently skipped wallpapers")
 
+@click.option('--show-metadata', is_flag=True, help="Display metadata of the current wallpaper")
 @click.option('--credits', is_flag=True, help="Display the artist and source of the current wallpaper. Removes watermark if run")
 
 def main(
+    status: bool,
     today: bool,
     credits: bool,
     back: int | None,
     skip: bool,
     unskip: int | None,
     unskip_all: bool,
-    list_skipped: bool
+    list_skipped: bool,
+    show_metadata: bool
 ):
     wallman = WallpaperManager()
     
-    if today:
+    if status:
+        pass
+        
+    elif today:
         print_wall_feedback(wallman.update_auto())
     
     elif back is not None:
@@ -84,6 +92,10 @@ def main(
             if skips.is_skipped(meta.img_url):
                 skipped.append(i)
         click.echo(skipped if len(skipped) > 0 else "No skipped wallpapers.")
+    
+    elif show_metadata:
+        meta = WallpaperMetadata.load()
+        click.echo(meta)
         
     else:
         click.echo(splash)

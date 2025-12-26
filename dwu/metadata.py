@@ -11,9 +11,9 @@ class WallpaperMetadata:
     img_url: str
     day: int
     add_watermark: bool =  True
-    artist: Optional[str] = None
-    source: Optional[str] = None
-    post_id: Optional[str] = None
+    artist: str = ""
+    source: str = ""
+    post_id: str = ""
     successfully_set: bool = False
     
     @classmethod
@@ -35,3 +35,23 @@ class WallpaperMetadata:
         
         with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(asdict(self), f, indent=2, ensure_ascii=False)
+        
+    def __str__(self) -> str:
+            lines = [
+                f"Day: {self.day}",
+                f"Image URL: {self.img_url}",
+            ]
+    
+            if self.artist:
+                lines.append(f"Artist: {self.artist}")
+            if self.source:
+                lines.append(f"Source: {self.source}")
+    
+            lines.append(
+                f"Watermark: {'yes' if self.add_watermark else 'no'}"
+            )
+            lines.append(
+                f"Successfully set: {'yes' if self.successfully_set else 'no'}"
+            )
+    
+            return "\n".join(lines)
