@@ -1,9 +1,16 @@
-<img width="1289" height="735" alt="dwu" src="https://github.com/user-attachments/assets/811da782-793d-44cb-b844-e16626077e00" />
+<p align=center>
+  <img width="800" alt="dwu" src="https://github.com/user-attachments/assets/811da782-793d-44cb-b844-e16626077e00">
+</p>
 
+<p align="center">
+  <img src="https://img.shields.io/pypi/v/dwu?style=flat-square" />
+  <img src="https://img.shields.io/aur/version/dwu?style=flat-square" />
+</p>
 
-<h4 align=center>DWU (Daily Wallpaper Updater) is a CLI tool that updates your desktop wallpaper each day to the latest anime wallpaper from <a href=https://wallpaper-a-day.com>wallpaper-a-day.com</a>  </h4>
+---
+<p align=center>A CLI tool that updates your desktop wallpaper each day to the latest anime wallpaper from <a href=https://wallpaper-a-day.com>wallpaper-a-day.com</a>  </p>
 
-## Installation
+<h1 align=center>Installation</h1>
 
 ### Arch Linux (AUR)
 
@@ -24,7 +31,7 @@ Right now, the supported ones are `awww`, `swww`, `feh`, and `nitrogen`
 
 If you use swww, consider switching to awww, as swww is now archived. The author's explanation is [here](https://www.lgfae.com/posts/2025-10-29-RenamingSwww.html)
 
-## Usage
+<h1 align=center>Usage</h1>
 
 Set to today's wallpaper
 
