@@ -4,6 +4,8 @@ from typing import Optional
 import json
 import os
 
+from .utils import get_cache_dir
+
 @dataclass
 class WallpaperMetadata:
     img_url: str
@@ -15,9 +17,9 @@ class WallpaperMetadata:
     successfully_set: bool = False
     
     @classmethod
-    def load_current(cls) -> Optional[WallpaperMetadata]:
-        cache_dir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
-        metadata_path = os.path.join(cache_dir, 'dwu', 'current_wallpaper.json')
+    def load(cls) -> Optional[WallpaperMetadata]:
+        cache_dir = get_cache_dir()
+        metadata_path = os.path.join(cache_dir, 'current_wallpaper.json')
         
         if not os.path.exists(metadata_path):
             return None
@@ -27,6 +29,9 @@ class WallpaperMetadata:
         
         return cls(**data)
     
-    def save(self, path: str) -> None:
-        with open(path, "w", encoding="utf-8") as f:
+    def save(self) -> None:
+        cache_dir = get_cache_dir()
+        metadata_path = os.path.join(cache_dir, 'current_wallpaper.json')
+        
+        with open(metadata_path, "w", encoding="utf-8") as f:
             json.dump(asdict(self), f, indent=2, ensure_ascii=False)

@@ -5,9 +5,11 @@ import httpx
 import subprocess
 import click
 
-from urllib.parse import urlparse
 from .scraper import WallpaperScraper
 from .metadata import WallpaperMetadata
+from .skip_manager import SkipManager
+from .utils import get_cache_dir, infer_extension, detect_display_server
+from .wallresult import WallResult
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -21,33 +23,47 @@ class WallpaperManager:
     def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:
         self._scraper = WallpaperScraper()
         self._client = httpx.Client(timeout=30.0)
-        self._cache_dir = self._get_cache_dir()
+        self._cache_dir = get_cache_dir()
         self._metadata_path = os.path.join(self._cache_dir, "current_wallpaper.json")
-    
-    def _get_cache_dir(self) -> str:
-        cache_dir = os.environ.get('XDG_CACHE_HOME', os.path.expanduser('~/.cache'))
-        app_cache = os.path.join(cache_dir, 'dwu')
-        os.makedirs(app_cache, exist_ok=True)
-        return app_cache
-
-    def update_wallpaper(self, post_index: int = 0) -> int:
-        meta = self._scraper.get_metadata(post_index)
-        if os.path.exists(self._metadata_path):
-            old_meta = WallpaperMetadata.load_current()
-            if old_meta is not None and meta.img_url == old_meta.img_url:
-                image_path = self._get_image_path(meta)
-                if os.path.exists(image_path):
-                    if old_meta.successfully_set:
-                        click.echo("Already using this wallpaper")
-                        return False
-                    else:
-                        return self._set_wallpaper(image_path, meta)
-
-        meta.save(self._metadata_path)
-        filename = self._download_image(meta)
-        return self._set_wallpaper(filename, meta)
         
-    def _watermark_image(self, img_path: str, metadata: WallpaperMetadata):
+    def update_back(self, days: int) -> WallResult:
+        meta = self._scraper.get_metadata(days)
+        return self._apply_wallpaper(meta)
+        
+    def update_auto(self) -> WallResult:
+        walls = self._scraper.get_all()
+        skips = SkipManager()
+        
+        for i, meta in enumerate(walls):
+            if skips.is_skipped(meta.img_url):
+                continue
+        
+            result = self._apply_wallpaper(meta)
+            if result == WallResult.ALREADY_SET:
+                return result
+            return WallResult.TODAY if i == 0 else WallResult.MOST_RECENT
+        
+        return WallResult.NO_VALID
+        
+    
+    def _apply_wallpaper(self, meta: WallpaperMetadata) -> WallResult:
+        old_meta = WallpaperMetadata.load()
+        
+        if old_meta and old_meta.img_url == meta.img_url:
+            if old_meta.successfully_set:
+                return WallResult.ALREADY_SET
+            
+            image_path = self._get_image_path(meta)
+            if os.path.exists(image_path):
+                self._set_wallpaper(image_path, meta)
+                return WallResult.SET
+        
+        meta.save()
+        self._set_wallpaper(self._download_image(meta), meta)
+        return WallResult.SET
+        
+        
+    def _watermark_image(self, img_path: str, metadata: WallpaperMetadata) -> None:
         img = Image.open(img_path)
         w, h = img.size
         dw, dh = self._get_display_resolution()
@@ -99,7 +115,7 @@ class WallpaperManager:
         img.save(img_path)   
         
     def _get_display_resolution(self) -> tuple:
-        ds = self._detect_display_server()
+        ds = detect_display_server()
         
         try:
             if ds == 'wayland':
@@ -135,20 +151,18 @@ class WallpaperManager:
             click.echo(f"Could not detect resolution: {e}")
             return (1920, 1080)
                 
-    def unwatermark(self, metadata: WallpaperMetadata):
+    def unwatermark(self, metadata: WallpaperMetadata) -> None:
         metadata.add_watermark = False
-        metadata.save(self._metadata_path)
+        metadata.save()
         filename = self._download_image(metadata)
         self._set_wallpaper(filename, metadata)
         
     def _get_image_path(self, metadata: WallpaperMetadata) -> str:
-        """Get the path where the image should be saved, based on metadata."""
-        ext = self._infer_extension(metadata.img_url)
+        ext = infer_extension(metadata.img_url)
         return os.path.join(self._cache_dir, f"current_wallpaper.{ext}")
 
     def _download_image(self, metadata: WallpaperMetadata) -> str:
-        """Download the image using img_url from given metadata"""
-        ext = self._infer_extension(metadata.img_url)
+        ext = infer_extension(metadata.img_url)
         save_path = os.path.join(self._cache_dir, f"current_wallpaper.{ext}")
         
         response = self._client.get(metadata.img_url)
@@ -165,19 +179,12 @@ class WallpaperManager:
         
         return save_path
         
-    def _infer_extension(self, url: str) -> str:
-        path = urlparse(url).path.lower()
-        for ext in ("jpg", "jpeg", "png"):
-            if path.endswith("." + ext):
-                return ext
-        return "png"
-
-    def _set_wallpaper(self, filename: str, meta: WallpaperMetadata) -> bool:
+    def _set_wallpaper(self, filename: str, meta: WallpaperMetadata) -> None:
         if not os.path.isfile(filename):
             raise WallpaperSetError("Wallpaper file not found")
             
         abs_path = os.path.abspath(filename)
-        ds = self._detect_display_server()
+        ds = detect_display_server()
         backends = [
             (["awww", "img", abs_path, "--transition-type", "any", 
                 "--transition-step", "63", "--transition-duration", "2", 
@@ -194,8 +201,8 @@ class WallpaperManager:
             try:
                 subprocess.run(cmd, check=True, capture_output=True, text=True)
                 meta.successfully_set = True
-                meta.save(self._metadata_path)
-                return True
+                meta.save()
+                return
             except FileNotFoundError:
                 continue
             except subprocess.CalledProcessError:
@@ -204,12 +211,3 @@ class WallpaperManager:
         click.echo("No supported wallpaper tool found. Please install one.")
         click.echo(f"I think you are using {ds.capitalize()}")
         click.echo(f"Currently supported wallpaper things for {ds.capitalize()} include " + ("awww" if ds == 'wayland' else "feh, nitrogen"))
-        
-        return False
-        
-    def _detect_display_server(self) -> str:
-        if os.environ.get('WAYLAND_DISPLAY'):
-            return 'wayland'
-        elif os.environ.get('DISPLAY'):
-            return 'x11'
-        return 'unknown'
