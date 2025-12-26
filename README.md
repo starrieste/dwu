@@ -3,8 +3,15 @@
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/pypi/v/dwu?style=flat-square" />
-  <img src="https://img.shields.io/aur/version/dwu?style=flat-square" />
+  <a href="https://aur.archlinux.org/packages/dwu">
+    <img src="https://img.shields.io/aur/version/dwu?style=flat-square" alt="AUR">
+  </a>
+  <a href="https://pypi.org/project/dwu/">
+    <img src="https://img.shields.io/pypi/v/dwu?style=flat-square" alt="PyPI">
+  </a>
+  <a href="https://github.com/starrieste/dwu/stargazers">
+    <img src="https://img.shields.io/github/stars/starrieste/dwu?style=flat-square" alt="Stars">
+  </a>
 </p>
 
 ---
