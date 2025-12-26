@@ -39,8 +39,8 @@ class WallpaperScraper:
         if not img_url:
             raise ImageDownloadError("Image source could not be resolved")
             
-        artist = None
-        source = None
+        artist = ""
+        source = ""
         
         for p in post.css('p'):
             if "credit" in p.text().lower():
