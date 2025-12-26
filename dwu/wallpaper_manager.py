@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import os
 import httpx
-import subprocess
 import click
 
 from .scraper import WallpaperScraper
 from .metadata import WallpaperMetadata
 from .skip_manager import SkipManager
-from .utils import get_cache_dir, infer_extension, detect_display_server
 from .wallresult import WallResult
+from .backends import get_backend, WallpaperBackend
+from .utils import get_cache_dir, infer_extension, detect_display_server, get_display_resolution
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -25,6 +25,7 @@ class WallpaperManager:
         self._client = httpx.Client(timeout=30.0)
         self._cache_dir = get_cache_dir()
         self._metadata_path = os.path.join(self._cache_dir, "current_wallpaper.json")
+        self._backend: WallpaperBackend | None = get_backend(detect_display_server())
         
     def update_back(self, days: int) -> WallResult:
         meta = self._scraper.get_metadata(days)
@@ -44,15 +45,23 @@ class WallpaperManager:
             return WallResult.TODAY if i == 0 else WallResult.MOST_RECENT
         
         return WallResult.NO_VALID
-        
     
     def _apply_wallpaper(self, meta: WallpaperMetadata) -> WallResult:
         old_meta = WallpaperMetadata.load()
         
         if old_meta and old_meta.img_url == meta.img_url:
             if old_meta.successfully_set:
-                return WallResult.ALREADY_SET
+                if self._backend:
+                    expected = os.path.abspath(self._get_image_path(meta))
+                    current = self._backend.get_current_wallpaper()
+                    
+                    if current is None:
+                        return WallResult.ALREADY_SET
+        
+                    if os.path.abspath(current) == expected:
+                        return WallResult.ALREADY_SET
             
+            # reapply
             image_path = self._get_image_path(meta)
             if os.path.exists(image_path):
                 self._set_wallpaper(image_path, meta)
@@ -66,7 +75,7 @@ class WallpaperManager:
     def _watermark_image(self, img_path: str, metadata: WallpaperMetadata) -> None:
         img = Image.open(img_path)
         w, h = img.size
-        dw, dh = self._get_display_resolution()
+        dw, dh = get_display_resolution()
         
         target_ratio = dw/dh
         difx, dify = 0, 0
@@ -112,45 +121,8 @@ class WallpaperManager:
             stroke_fill="black",
         )
         
-        img.save(img_path)   
+        img.save(img_path)
         
-    def _get_display_resolution(self) -> tuple:
-        ds = detect_display_server()
-        
-        try:
-            if ds == 'wayland':
-                result = subprocess.run(
-                    'wlr-randr | grep current',
-                    shell=True,
-                    capture_output=True,
-                    text=True,
-                    check=True
-                )
-                res = result.stdout.strip().split(" ")[0]
-                
-            elif ds == 'x11':
-                result = subprocess.run(
-                    ['xrandr'],
-                    capture_output=True,
-                    text=True,
-                    check=True
-                )
-                
-                for line in result.stdout.split('\n'):
-                    if '*' in line:
-                        res = line.split()[0]
-                        break
-                else:
-                    return (1920, 1080)
-            else:
-                return (1920, 1080)
-            
-            return tuple(map(int, res.split('x')))
-            
-        except Exception as e:
-            click.echo(f"Could not detect resolution: {e}")
-            return (1920, 1080)
-                
     def unwatermark(self, metadata: WallpaperMetadata) -> None:
         metadata.add_watermark = False
         metadata.save()
@@ -182,32 +154,15 @@ class WallpaperManager:
     def _set_wallpaper(self, filename: str, meta: WallpaperMetadata) -> None:
         if not os.path.isfile(filename):
             raise WallpaperSetError("Wallpaper file not found")
+        if not self._backend:
+            raise WallpaperSetError("No wallpaper backend found")
             
-        abs_path = os.path.abspath(filename)
-        ds = detect_display_server()
-        backends = [
-            (["awww", "img", abs_path, "--transition-type", "any", 
-                "--transition-step", "63", "--transition-duration", "2", 
-                "--transition-fps", "60"], "awww"),
-            (["swww", "img", abs_path, "--transition-type", "any", 
-                "--transition-step", "63", "--transition-duration", "2", 
-                "--transition-fps", "60"], "swww"),
-        ] if ds == 'wayland' else [ # else assume X11
-            (["feh", "--bg-fill", abs_path], "feh"),
-            (["nitrogen", "--set-scaled", abs_path], "nitrogen"), 
-        ]
-            
-        for cmd, name in backends:
-            try:
-                subprocess.run(cmd, check=True, capture_output=True, text=True)
-                meta.successfully_set = True
-                meta.save()
-                return
-            except FileNotFoundError:
-                continue
-            except subprocess.CalledProcessError:
-                continue
+        try:
+            self._backend.set_wallpaper(os.path.abspath(filename))
+        except Exception as e:
+            raise WallpaperSetError(
+                f"Failed to set wallpaper using {self._backend.name}: {e}"
+            ) from e
         
-        click.echo("No supported wallpaper tool found. Please install one.")
-        click.echo(f"I think you are using {ds.capitalize()}")
-        click.echo(f"Currently supported wallpaper things for {ds.capitalize()} include " + ("awww" if ds == 'wayland' else "feh, nitrogen"))
+        meta.successfully_set = True
+        meta.save()

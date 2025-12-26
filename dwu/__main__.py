@@ -1,7 +1,8 @@
 import click
+import sys
 
 from .splash import splash
-from .wallpaper_manager import WallpaperManager
+from .wallpaper_manager import WallpaperManager, WallpaperSetError
 from .metadata import WallpaperMetadata
 from .skip_manager import SkipManager
 from .scraper import WallpaperScraper
@@ -46,10 +47,18 @@ def main(
         pass
         
     elif today:
-        print_wall_feedback(wallman.update_auto())
+        try:
+            print_wall_feedback(wallman.update_auto())
+        except WallpaperSetError as e:
+            click.secho(f"Error: {e}", fg="red")
+            sys.exit(1)
     
     elif back is not None:
-        print_wall_feedback(wallman.update_back(back))
+        try:
+            print_wall_feedback(wallman.update_back(back))
+        except WallpaperSetError as e:
+            click.secho(f"Error: {e}", fg="red")
+            sys.exit(1)
         
     elif credits:
         meta = WallpaperMetadata.load()
