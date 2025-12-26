@@ -1,3 +1,4 @@
+import random
 import click
 import sys
 
@@ -11,7 +12,7 @@ from .utils import print_wall_feedback
 def print_version(ctx, param, value):
     if not value or ctx.resilient_parsing:
         return
-    click.echo("DWU (Daily Wallpaper Updater) 1.1.0")
+    click.echo("DWU (Daily Wallpaper Updater) 1.1.1")
     ctx.exit()
 
 @click.command()
@@ -99,7 +100,27 @@ def main(
             click.echo(skipped if len(skipped) > 0 else "No skipped wallpapers.")
             
         else:
-            click.echo(splash)
+            click.secho(
+                splash,
+                fg=random.choice((
+                    "black",
+                    "red",
+                    "green",
+                    "yellow",
+                    "blue",
+                    "magenta",
+                    "cyan",
+                    "white",
+                    "bright_black",
+                    "bright_red",
+                    "bright_green",
+                    "bright_yellow",
+                    "bright_blue",
+                    "bright_magenta",
+                    "bright_cyan",
+                    "bright_white",
+                ))
+            )
             
     except Exception as e:
         click.secho(f"Error: {e}", fg="red")
