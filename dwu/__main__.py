@@ -99,11 +99,14 @@ def main(
         elif list_skipped:
             skips = SkipManager()
             walls = WallpaperScraper().get_all()
-            skipped = []
             for i, meta in enumerate(walls):
+                click.echo(f"{i} - Day {meta.day}: ", nl=False)
                 if skips.is_skipped(meta.img_url):
-                    skipped.append(i)
-            click.echo(skipped if len(skipped) > 0 else "No skipped wallpapers.")
+                    click.secho("SKIP", nl=False, fg="red")
+                else:
+                    click.secho("OK", nl=False, fg="green")
+                    
+                click.secho("")
             
         elif credits:
             meta = WallpaperMetadata.load()
