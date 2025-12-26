@@ -2,7 +2,7 @@ import click
 import sys
 
 from .splash import splash
-from .wallpaper_manager import WallpaperManager, WallpaperSetError
+from .wallpaper_manager import WallpaperManager
 from .metadata import WallpaperMetadata
 from .skip_manager import SkipManager
 from .scraper import WallpaperScraper
@@ -43,83 +43,69 @@ def main(
 ):
     try:
         wallman = WallpaperManager()
+        
+        if status:
+            click.echo("Backend: " + wallman.get_backend_name())
+            # ADD MORE STATUS THINGS LATER I NEED SLEEP UGH
+            
+        elif today:
+            print_wall_feedback(wallman.update_auto())
+        
+        elif back is not None:
+            print_wall_feedback(wallman.update_back(back))
+            
+        elif c
+            meta = WallpaperMetadata.load()
+            if not meta:
+                click.echo("No wallpaper metadata found")
+                return
+        
+            click.echo(f"Day {meta.day} Credits:")
+            if meta.artist:
+                click.echo(f"    Artist: {meta.artist}")
+            if meta.source:
+                click.echo(f"    Source: {meta.source}")
+        
+            if meta.add_watermark:
+                wallman.unwatermark(meta)
+                    
+        elif skip:
+            meta = WallpaperMetadata.load()
+            skips = SkipManager()
+        
+            if not meta or not meta.successfully_set:
+                click.echo("No active wallpaper to skip.")
+                return
+        
+            skips.add(meta.img_url)
+            print_wall_feedback(wallman.update_auto())
+            
+        elif unskip is not None:
+            wall = WallpaperScraper().get_all()[unskip]
+            SkipManager().unskip(wall.img_url)
+        
+        elif unskip_all:
+            SkipManager().unskip_all()
+            
+        elif list_skipped:
+            skips = SkipManager()
+            walls = WallpaperScraper().get_all()
+            skipped = []
+            for i, meta in enumerate(walls):
+                if skips.is_skipped(meta.img_url):
+                    skipped.append(i)
+            click.echo(skipped if len(skipped) > 0 else "No skipped wallpapers.")
+        
+        elif show_metadata:
+            meta = WallpaperMetadata.load()
+            click.echo(meta)
+            
+        else:
+            click.echo(splash)
+            
     except Exception as e:
         click.secho(f"Error: {e}", fg="red")
         sys.exit(1)
-    
-    if status:
-        try:
-            if wallman._backend is not None:
-                click.echo(wallman._backend.name)
-        except Exception as e:
-            click.secho(f"Error: {e}", fg="red")
-            sys.exit(1)
-        
-    elif today:
-        try:
-            print_wall_feedback(wallman.update_auto())
-        except WallpaperSetError as e:
-            click.secho(f"Error: {e}", fg="red")
-            sys.exit(1)
-    
-    elif back is not None:
-        try:
-            print_wall_feedback(wallman.update_back(back))
-        except WallpaperSetError as e:
-            click.secho(f"Error: {e}", fg="red")
-            sys.exit(1)
-        except RuntimeError as e:
-            click.secho(f"Error: {e}", fg="red")
-            sys.exit(1)
-        
-    elif credits:
-        meta = WallpaperMetadata.load()
-        if not meta:
-            click.echo("No wallpaper metadata found")
-            return
-    
-        click.echo(f"Day {meta.day} Credits:")
-        if meta.artist:
-            click.echo(f"    Artist: {meta.artist}")
-        if meta.source:
-            click.echo(f"    Source: {meta.source}")
-    
-        if meta.add_watermark:
-            wallman.unwatermark(meta)
-                
-    elif skip:
-        meta = WallpaperMetadata.load()
-        skips = SkipManager()
-    
-        if not meta or not meta.successfully_set:
-            click.echo("No active wallpaper to skip.")
-            return
-    
-        skips.add(meta.img_url)
-        print_wall_feedback(wallman.update_auto())
-        
-    elif unskip is not None:
-        wall = WallpaperScraper().get_all()[unskip]
-        SkipManager().unskip(wall.img_url)
-    
-    elif unskip_all:
-        SkipManager().unskip_all()
-        
-    elif list_skipped:
-        skips = SkipManager()
-        walls = WallpaperScraper().get_all()
-        skipped = []
-        for i, meta in enumerate(walls):
-            if skips.is_skipped(meta.img_url):
-                skipped.append(i)
-        click.echo(skipped if len(skipped) > 0 else "No skipped wallpapers.")
-    
-    elif show_metadata:
-        meta = WallpaperMetadata.load()
-        click.echo(meta)
-        
-    else:
-        click.echo(splash)
 
 if __name__ == '__main__':
     main()

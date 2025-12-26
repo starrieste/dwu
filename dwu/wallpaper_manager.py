@@ -52,13 +52,7 @@ class WallpaperManager:
         if old_meta and old_meta.img_url == meta.img_url:
             if old_meta.successfully_set:
                 if self._backend:
-                    expected = os.path.abspath(self._get_image_path(meta))
-                    current = self._backend.get_current_wallpaper()
-                    
-                    if current is None:
-                        return WallResult.ALREADY_SET
-        
-                    if os.path.abspath(current) == expected:
+                    if self.backend_check_wallpaper_already_set(meta):
                         return WallResult.ALREADY_SET
             
             # reapply
@@ -70,7 +64,21 @@ class WallpaperManager:
         meta.save()
         self._set_wallpaper(self._download_image(meta), meta)
         return WallResult.SET
+    
+    def get_backend_name(self) -> str:
+        return self._backend.name if self._backend is not None else "None"
+    
+    def backend_check_wallpaper_already_set(self, meta):
+        expected = os.path.abspath(self._get_image_path(meta))
+        current = self._backend.get_current_wallpaper() if self._backend is not None else None
         
+        if current is None:
+            return True
+
+        if os.path.abspath(current) == expected:
+            return True
+            
+        return False
         
     def _watermark_image(self, img_path: str, metadata: WallpaperMetadata) -> None:
         img = Image.open(img_path)
