@@ -50,10 +50,12 @@ class WallpaperManager:
         old_meta = WallpaperMetadata.load()
         
         if old_meta and old_meta.img_url == meta.img_url:
-            if old_meta.successfully_set:
-                if self._backend:
-                    if self.currently_set(meta):
-                        return WallResult.ALREADY_SET
+            meta.add_watermark = old_meta.add_watermark
+            meta.successfully_set = old_meta.successfully_set
+            
+            if old_meta.successfully_set and self._backend:
+                if self.currently_set(meta):
+                    return WallResult.ALREADY_SET
             
             # reapply
             image_path = self._get_image_path(meta)
