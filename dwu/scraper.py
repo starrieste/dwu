@@ -31,33 +31,41 @@ class WallpaperScraper:
         return posts
         
     def _metadata_from_post(self, post) -> WallpaperMetadata:
-        img = post.css_first("img")
-        if not img:
+        imgs = post.css("img[data-orig-file]")
+        if not imgs:
             raise ImageDownloadError("No image in post")
             
+        img = imgs[0]
         img_url = img.attributes.get("data-orig-file")
         if not img_url:
             raise ImageDownloadError("Image source could not be resolved")
             
+        day = -1
+        for p in post.css("p"):
+            digits = "".join(c for c in p.text() if c.isdigit())
+            if digits:
+                day = int(digits)
+                break
+            
         artist = ""
         source = ""
         
-        for p in post.css('p'):
-            if "credit" in p.text().lower():
-                link = p.css_first("a")
+        linklines = [p for p in post.css("p") if p.css_first("a")]
+        
+        if linklines:
+            if len(imgs) == 1:
+                target_p = linklines[1] if len(linklines) > 1 else None
+            else:
+                target_p = linklines[0]
+            
+            if target_p:
+                link = target_p.css_first("a")
                 if link:
                     artist = link.text().strip()
-                    source = link.attributes.get("href")
-                break
+                    source = link.attributes.get("href", "")
             
         post_id = post.attributes.get('id')
         
-        day = -1
-        dayline = post.css_first('p')
-        if dayline: 
-            digits = "".join(c for c in dayline.text() if c.isdigit())
-            day = int(digits) if digits else -1
-            
         
         return  WallpaperMetadata(
             img_url=img_url,
