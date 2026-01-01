@@ -28,6 +28,7 @@ def print_version(ctx, param, value):
 @click.option('--save-dir', type=click.STRING, help="Set the save directory where you want to save the wallpapers.")
 
 @click.option('--skip', is_flag=True, help="Skip this wallpaper. DWU will try to find the most recent non-skipped wallpaper to set instead if you run --today.")
+@click.option('--skip-all', is_flag=True, help="Unskip all wallpapers.")
 @click.option('--unskip', type=click.INT, help="Unskip a wallpaper. 0 is today, then 1-9 is days before today.")
 @click.option('--unskip-all', is_flag=True, help="Unskip all wallpapers.")
 @click.option('--list-skipped', is_flag=True, help="List currently skipped wallpapers")
@@ -41,6 +42,7 @@ def main(
     save: bool,
     save_dir: str | None,
     skip: bool,
+    skip_all: bool,
     unskip: int | None,
     unskip_all: bool,
     list_skipped: bool,
@@ -88,13 +90,26 @@ def main(
         
             skips.add(meta.img_url)
             print_wall_feedback(wallman.update_auto())
+        
+        elif skip_all:
+            skips = SkipManager()
+            walls = WallpaperScraper().get_all()
+            for i, meta in enumerate(walls):
+                if skips.add(meta.img_url):
+                    click.echo(f"Skipped wallpaper {i}")
             
         elif unskip is not None:
             wall = WallpaperScraper().get_all()[unskip]
-            SkipManager().unskip(wall.img_url)
+            skips = SkipManager()
+            if not skips.is_skipped(wall.img_url):
+                click.echo("Wallpaper isn't skipped")
+            else:
+                if SkipManager().unskip(wall.img_url):
+                    click.echo("Unskipped that wallpaper")
         
         elif unskip_all:
             SkipManager().unskip_all()
+            click.echo("Cleared skips")
             
         elif list_skipped:
             skips = SkipManager()

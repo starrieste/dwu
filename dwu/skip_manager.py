@@ -28,27 +28,21 @@ class SkipManager:
     def is_skipped(self, img_url: str) -> bool:
         return img_url in self._skips
         
-    def add(self, url: str | None):
-        if url is None:
-            click.echo("Unsure of what to skip")
-            return
-        if self.is_skipped(url):
-            click.echo("This wallpaper is already skipped!")
-            return
+    def add(self, url: str | None) -> bool:
+        if url is None or self.is_skipped(url):
+            return False
         self._skips.add(url)
         self._save()
-        click.echo("Skipped this wallpaper")
+        return True
     
-    def unskip(self, url: str):
+    def unskip(self, url: str) -> bool:
         if not self.is_skipped(url):
-            click.echo("That wallpaper was not skipped!")
-            return
+            return False
         
         self._skips.remove(url)
         self._save()
-        click.echo("Unskipped that wallpaper")
+        return True
     
     def unskip_all(self):
         self._skips = set()
         self._save()
-        click.echo("Cleared skips.")
