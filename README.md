@@ -15,7 +15,7 @@
 </p>
 
 ---
-<p align=center>A CLI tool that updates your desktop wallpaper each day to the latest anime wallpaper from <a href=https://wallpaper-a-day.com>wallpaper-a-day.com</a>  </p>
+<p align=center>A CLI tool that updates your desktop wallpaper each day to the latest anime wallpaper from<br><a href=https://wallpaper-a-day.com>wallpaper-a-day.com</a>  </p>
 
 <h1>Installation</h1>
 
