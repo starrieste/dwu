@@ -77,3 +77,8 @@ To remove it (for the current wallpaper), run the following command.
 ```bash
 dwu --credits
 ```
+
+h1>Thank You!</h1>
+
+If you like this project, please share it with your friends!
+I'm just starting out, and it would mean the world to me :D
