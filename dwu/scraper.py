@@ -1,0 +1,98 @@
+from __future__ import annotations
+import httpx
+from selectolax.parser import HTMLParser
+
+from dwu.metadata import WallpaperMetadata
+
+class ImageDownloadError(Exception):
+    pass
+
+class WallpaperScraper:
+    def __init__(self, root_url: str = 'https://wallpaper-a-day.com') -> None:
+        self._root_url = root_url
+        self._client = httpx.Client(
+            follow_redirects=True,
+            timeout=10.0,
+            headers={
+                "User-Agent": "dwu/1.0 (+https://github.com/starrieste/dwu)",
+                "Accept": "*/*",
+                "Referer": self._root_url
+            },
+        )
+    
+    def _get_posts(self):
+        response = self._client.get(self._root_url)
+        tree = HTMLParser(response.text)
+        
+        posts = tree.css(".post")
+        if not posts:
+            raise ImageDownloadError("Could not find post")
+            
+        return posts
+        
+    def _metadata_from_post(self, post) -> WallpaperMetadata:
+        imgs = post.css("img[data-orig-file]")
+        if not imgs:
+            raise ImageDownloadError("No image in post")
+            
+        img = imgs[0]
+        img_url = img.attributes.get("data-orig-file")
+        if not img_url:
+            raise ImageDownloadError("Image source could not be resolved")
+            
+        day = -1
+        for p in post.css("p"):
+            digits = "".join(c for c in p.text() if c.isdigit())
+            if digits:
+                day = int(digits)
+                break
+            
+        artist = ""
+        source = ""
+        
+        linklines = [p for p in post.css("p") if p.css_first("a")]
+        
+        if linklines:
+            if len(imgs) == 1:
+                target_p = linklines[1] if len(linklines) > 1 else None
+            else:
+                target_p = linklines[0]
+            
+            if target_p:
+                link = target_p.css_first("a")
+                if link:
+                    artist = link.text().strip()
+                    source = link.attributes.get("href", "")
+            
+        post_id = post.attributes.get('id')
+        
+        
+        return  WallpaperMetadata(
+            img_url=img_url,
+            day=day,
+            artist=artist,
+            source=source,
+            post_id=post_id
+        )
+    
+    def get_metadata(self, post_index: int = 0) -> WallpaperMetadata:
+        posts = self._get_posts()
+        
+        try:
+            post = posts[post_index]
+        except IndexError:
+            raise ImageDownloadError(f"No post at index {post_index}")
+            
+        return self._metadata_from_post(post)
+
+    def get_all(self, limit: int = 10) -> list[WallpaperMetadata]:
+        posts = self._get_posts()
+        wallpapers: list[WallpaperMetadata] = []
+        
+        for post in posts[:limit]:
+            try:
+                wallpapers.append(self._metadata_from_post(post))
+            except ImageDownloadError:
+                continue
+        
+        return wallpapers

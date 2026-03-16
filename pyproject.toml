@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dwu"
+version = "1.2.8"
+description = "A dynamic wallpaper updater"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {file = "LICENSE"}
+authors = [
+    {name = "starrieste"}
+]
+
+dependencies = [
+    "click",
+    "httpx",
+    "selectolax",
+    "pillow",
+    "platformdirs",
+    "tomli_w"
+]
+
+[project.scripts]
+dwu = "dwu.__main__:main"
+
+[project.urls]
+Repository = "https://github.com/starrieste/dwu"
+
+[tool.setuptools]
+packages = {find = {}}

@@ -1,0 +1,9 @@
+[Unit]
+Description=Run DWU hourly
+
+[Timer]
+OnCalendar=hourly
+OnStartupSec=10
+
+[Install]
+WantedBy=timers.target
